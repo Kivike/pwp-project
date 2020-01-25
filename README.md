@@ -1,5 +1,5 @@
 # PWP SPRING 2020
-# PROJECT NAME
+# Game Score API
 # Group information
 * Student 1. Roope Rajala roope.rajala@student.oulu.fi
 * Student 2. Julius Hekkala julius.hekkala@gmail.com
