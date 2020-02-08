@@ -1,5 +1,12 @@
 from app import db
 
+#Many to many relationship between players and games
+players_in_games = db.Table("players_in_games", 
+    db.Column("game_id", db.Integer, db.ForeignKey("game.id"), primary_key=True),
+    db.Column("player_id", db.Integer, db.ForeignKey("player.id"), primary_key=True)
+    )
+
+
 #A single game 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -12,6 +19,7 @@ class Game(db.Model):
     player = db.relationship("Player", back_populates="player_game")
     game_score = db.relationship("PlayerScore", back_populates="game")
     tournament = db.relationship("Tournament", back_populates="game")
+    players = db.relationship("Player", secondary=players_in_games, back_populates="games")
 
 
 class Player(db.Model):
@@ -19,6 +27,7 @@ class Player(db.Model):
     name = db.Column(db.VARCHAR(255), nullable=False, unique=True, index=True)
     player_game = db.relationship("Game", back_populates="player")
     player_score = db.relationship("PlayerScore", back_populates="player")
+    games = db.relationship("Game", secondary=players_in_games, back_populates="players")
 
 class PlayerScore(db.Model):
     id = db.Column(db.Integer, primary_key=True)
