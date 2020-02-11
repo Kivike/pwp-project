@@ -1,12 +1,5 @@
 from app import db
 
-#Many to many relationship between players and games
-players_in_games = db.Table("players_in_games", 
-    db.Column("game_id", db.Integer, db.ForeignKey("game.id"), primary_key=True),
-    db.Column("player_id", db.Integer, db.ForeignKey("player.id"), primary_key=True)
-    )
-
-
 #A single game 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -15,19 +8,14 @@ class Game(db.Model):
     host_id = db.Column(db.Integer, db.ForeignKey("player.id", ondelete="SET NULL"), nullable=False)
     tournament_id = db.Column(db.Integer, db.ForeignKey("tournament.id", ondelete="SET NULL")) #Being part of a tournament is optional
 
-    game_type = db.relationship("GameType", back_populates="gametype_game")
-    player = db.relationship("Player", back_populates="player_game")
-    game_score = db.relationship("PlayerScore", back_populates="game")
+    game_type = db.relationship("GameType", back_populates="game")
+    host = db.relationship("Player")
+    scores = db.relationship("PlayerScore", back_populates="game")
     tournament = db.relationship("Tournament", back_populates="game")
-    players = db.relationship("Player", secondary=players_in_games, back_populates="games")
-
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.VARCHAR(255), nullable=False, unique=True, index=True)
-    player_game = db.relationship("Game", back_populates="player")
-    player_score = db.relationship("PlayerScore", back_populates="player")
-    games = db.relationship("Game", secondary=players_in_games, back_populates="players")
 
 class PlayerScore(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -35,15 +23,15 @@ class PlayerScore(db.Model):
     score = db.Column(db.Float(24))
     game_id = db.Column(db.Integer, db.ForeignKey("game.id"), nullable=False)
 
-    player = db.relationship("Player", back_populates="player_score")
-    game = db.relationship("Game", back_populates="game_score")
-
+    player = db.relationship("Player")
+    game = db.relationship("Game", back_populates="scores")
 
 class GameType(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
     name = db.Column(db.String(255), unique=True, nullable=False)
     max_players = db.Column(db.Integer)
-    gametype_game = db.relationship("Game", back_populates="game_type")
+
+    game = db.relationship("Game", back_populates="game_type")
 
 class Leaderboard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -61,4 +49,5 @@ class Permission(db.Model):
 class Tournament(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True, nullable=False)
+
     game = db.relationship("Game", back_populates="tournament")

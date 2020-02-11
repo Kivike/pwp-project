@@ -1,4 +1,9 @@
-from app import db, Player, PlayerScore, GameType, Tournament, Game 
+from app import db, create_app
+from orm_models import Player, PlayerScore, GameType, Tournament, Game 
+
+app = create_app('dev')
+app_context = app.app_context()
+app_context.push()
 
 db.drop_all()   
 
@@ -21,15 +26,16 @@ def populate_db():
     tournament = Tournament(name="Chess Tournament 1")
 
     #Initialize a game and add the players
-    chess_game = Game(status=1, game_type=game_type, player=player_1, tournament=tournament)
-    chess_game.players.append(player_1)
-    chess_game.players.append(player_2)
-    chess_game.players.append(player_3)
+    chess_game = Game(status=1, game_type=game_type, host=player_1, tournament=tournament)
 
-    #The scores of the players at time point x
-    player_1_score = PlayerScore(player=player_1, score=5, game=chess_game)
-    player_2_score = PlayerScore(player=player_2, score=10, game=chess_game)
-    player_3_score = PlayerScore(player=player_3, score=12, game=chess_game)
+    #Initial player scores
+    player_1_score = PlayerScore(player=player_1, game=chess_game)
+    player_2_score = PlayerScore(player=player_2, game=chess_game)
+    player_3_score = PlayerScore(player=player_3, game=chess_game)
+
+    chess_game.scores.append(player_1_score)
+    chess_game.scores.append(player_2_score)
+    chess_game.scores.append(player_3_score)
 
     db.session.add(player_1)
     db.session.add(player_2)
