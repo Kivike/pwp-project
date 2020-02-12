@@ -1,7 +1,7 @@
 import unittest
 import numbers
-from app import create_app, db
-from orm_models import GameType, Player, Game, PlayerScore
+from src.app import create_app, db
+from src.orm_models import GameType, Player, Game, PlayerScore
 
 class TestGame(unittest.TestCase):
 

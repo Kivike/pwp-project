@@ -1,5 +1,5 @@
-from app import db, create_app
-from orm_models import Player, PlayerScore, GameType, Tournament, Game 
+from src.app import db, create_app
+from src.orm_models import Player, PlayerScore, GameType, Tournament, Game 
 
 app = create_app('dev')
 app_context = app.app_context()
