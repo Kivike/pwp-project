@@ -1,14 +1,16 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy   
 
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(app)
+from config import config
 
-from orm_models import *
+db = SQLAlchemy()
 
+def create_app(config_name):
+    app = Flask(__name__)
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
 
+    db.init_app(app)
 
-
-
+    return app
+    
