@@ -7,7 +7,8 @@ class Game(db.Model):
     game_type_id = db.Column(db.Integer, db.ForeignKey("game_type.id", ondelete="SET NULL"), nullable=False)
     host_id = db.Column(db.Integer, db.ForeignKey("player.id", ondelete="SET NULL"), nullable=False)
     tournament_id = db.Column(db.Integer, db.ForeignKey("tournament.id", ondelete="SET NULL")) #Being part of a tournament is optional
-
+    game_token = db.Column(db.String(20), nullable=False)
+    
     game_type = db.relationship("GameType", back_populates="game")
     host = db.relationship("Player")
     scores = db.relationship("PlayerScore", back_populates="game")
@@ -39,12 +40,6 @@ class Leaderboard(db.Model):
     game_type_id = db.Column(db.Integer, nullable=False, unique=True, index=True)
     wins = db.Column(db.Integer, nullable=False)
     losses = db.Column(db.Integer, nullable=False)
-
-class Permission(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    game_id = db.Column(db.Integer, nullable=False, index=True)
-    key = db.Column(db.String(255), nullable=False) #This is used for permission verification
-    value = db.Column(db.String(255))
 
 class Tournament(db.Model):
     id = db.Column(db.Integer, primary_key=True)

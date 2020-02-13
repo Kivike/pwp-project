@@ -54,7 +54,7 @@ class TestGame(unittest.TestCase):
     def create_basic_game(self):
         game_type = GameType(name="chess", max_players=3)
         host = Player(name="Test player")
-        game = Game(status=1, game_type=game_type, host=host)
+        game = Game(status=1, game_type=game_type, host=host, game_token="test")
 
         db.session.add(game_type)
         db.session.add(host)

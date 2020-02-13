@@ -26,7 +26,7 @@ def populate_db():
     tournament = Tournament(name="Chess Tournament 1")
 
     #Initialize a game and add the players
-    chess_game = Game(status=1, game_type=game_type, host=player_1, tournament=tournament)
+    chess_game = Game(status=1, game_type=game_type, host=player_1, tournament=tournament, game_token="test_token")
 
     #Initial player scores
     player_1_score = PlayerScore(player=player_1, game=chess_game)
