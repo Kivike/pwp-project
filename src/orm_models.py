@@ -36,8 +36,8 @@ class GameType(db.Model):
 
 class Leaderboard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    player_id = db.Column(db.Integer, nullable=False, unique=True, index=True)
-    game_type_id = db.Column(db.Integer, nullable=False, unique=True, index=True)
+    player_id = db.Column(db.Integer, nullable=False, index=True)
+    game_type_id = db.Column(db.Integer, nullable=False, index=True)
     wins = db.Column(db.Integer, nullable=False)
     losses = db.Column(db.Integer, nullable=False)
 
