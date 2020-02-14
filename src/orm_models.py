@@ -1,39 +1,49 @@
 from src.app import db
 
-#A single game 
+'''This file contains all the ORM models for the database'''
+
+#Represents a single match
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.Integer)
+    status = db.Column(db.Integer) #1 if active, 0 if not active
     game_type_id = db.Column(db.Integer, db.ForeignKey("game_type.id", ondelete="SET NULL"), nullable=False)
-    host_id = db.Column(db.Integer, db.ForeignKey("player.id", ondelete="SET NULL"), nullable=False)
+    host_id = db.Column(db.Integer, db.ForeignKey("player.id", ondelete="SET NULL"), nullable=False) #One of the players has to be a host
     tournament_id = db.Column(db.Integer, db.ForeignKey("tournament.id", ondelete="SET NULL")) #Being part of a tournament is optional
-    game_token = db.Column(db.String(20), nullable=False)
+    game_token = db.Column(db.String(20), nullable=False) 
     
+    #Relationships to other models
     game_type = db.relationship("GameType", back_populates="game")
     host = db.relationship("Player")
     scores = db.relationship("PlayerScore", back_populates="game")
     tournament = db.relationship("Tournament", back_populates="game")
 
+#Represents a single player, only name defined 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.VARCHAR(255), nullable=False, unique=True, index=True)
 
+#The score of a player in a match
+#This also connects players and games to each other
 class PlayerScore(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     player_id = db.Column(db.Integer, db.ForeignKey("player.id"), nullable=False)
     score = db.Column(db.Float(24))
     game_id = db.Column(db.Integer, db.ForeignKey("game.id"), nullable=False)
 
+    #Relationships to other models
     player = db.relationship("Player")
     game = db.relationship("Game", back_populates="scores")
 
+#A type of game, used to differentiate different kind of games from each other 
 class GameType(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
     name = db.Column(db.String(255), unique=True, nullable=False)
     max_players = db.Column(db.Integer)
 
+    #Relationships to other models
     game = db.relationship("Game", back_populates="game_type")
 
+#Used to track how well a player has done in games of different game types
 class Leaderboard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     player_id = db.Column(db.Integer, nullable=False, index=True)
@@ -41,6 +51,7 @@ class Leaderboard(db.Model):
     wins = db.Column(db.Integer, nullable=False)
     losses = db.Column(db.Integer, nullable=False)
 
+#Optional, can be used for different tournaments
 class Tournament(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True, nullable=False)

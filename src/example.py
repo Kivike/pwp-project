@@ -1,6 +1,10 @@
 from src.app import db, create_app
 from src.orm_models import Player, PlayerScore, GameType, Tournament, Game, Leaderboard 
 
+'''This is used to create an example populated database. Can be run from 
+the root folder of the project with 'python -m src.example' '''
+
+#Setup the database
 app = create_app('dev')
 app_context = app.app_context()
 app_context.push()
@@ -11,7 +15,7 @@ db.create_all()
 
 
 
-#This script creates example data in the database
+#This function creates example data in the database
 def first_example():
 
     #GAME 1 - A chess game with 3 players
@@ -35,10 +39,12 @@ def first_example():
     player_2_score = PlayerScore(player=player_2, game=chess_game)
     player_3_score = PlayerScore(player=player_3, game=chess_game)
 
+    #Connect the player scores to the game
     chess_game.scores.append(player_1_score)
     chess_game.scores.append(player_2_score)
     chess_game.scores.append(player_3_score)
 
+    #Add the created things to the database
     db.session.add(player_1)
     db.session.add(player_2)
     db.session.add(player_3)
@@ -53,7 +59,7 @@ def first_example():
     db.session.commit()
 
 
-#This script creates more example data in the database
+#This function creates more example data in the database
 def second_example():
     
     #GAME 2 - Hearts game with 4 players
@@ -78,15 +84,13 @@ def second_example():
     player_3_score = PlayerScore(player=player_3, score=95, game=hearts_game)
     player_4_score = PlayerScore(player=player_4, score=24, game=hearts_game)
 
+    #Connect the players scores to the game
     hearts_game.scores.append(player_1_score)
     hearts_game.scores.append(player_2_score)
     hearts_game.scores.append(player_3_score)
     hearts_game.scores.append(player_4_score)
 
-    hearts_game.scores.append(player_1_score)
-    hearts_game.scores.append(player_2_score)
-    hearts_game.scores.append(player_3_score)
-
+    #Add the created things to database
     db.session.add(player_1)
     db.session.add(player_2)
     db.session.add(player_3)
@@ -106,7 +110,7 @@ def second_example():
     player_3_leaderboard = Leaderboard(player_id=player_3.id, game_type_id=hearts_game.id, wins=2, losses=5)
     player_4_leaderboard = Leaderboard(player_id=player_4.id, game_type_id=hearts_game.id, wins=0, losses=3)
 
-
+    #Add the leaderboard entries to the db
     db.session.add(player_1_leaderboard)
     db.session.add(player_2_leaderboard)
     db.session.add(player_3_leaderboard)
