@@ -65,3 +65,4 @@ class TestPlayer(unittest.TestCase):
 
     def testDuplicatePlayerIdThrowsError(self):
         player_1 = Player()
+        

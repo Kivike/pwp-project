@@ -107,3 +107,4 @@ class TestPlayer(unittest.TestCase):
         db.session.add(player)
         db.session.commit()
         return player
+        

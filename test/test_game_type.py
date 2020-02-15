@@ -91,3 +91,4 @@ class TestGame(unittest.TestCase):
 
         with self.assertRaises(orm.exc.FlushError):
             db.session.commit()
+            

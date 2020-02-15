@@ -76,3 +76,4 @@ class TestPlayer(unittest.TestCase):
         db.session.commit()
 
         assert Tournament.query.filter_by(status=1).count() == 2
+        
