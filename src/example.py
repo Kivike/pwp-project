@@ -13,8 +13,6 @@ db.drop_all()
 
 db.create_all()
 
-
-
 #This function creates example data in the database
 def first_example():
 
@@ -57,7 +55,6 @@ def first_example():
     db.session.add(player_3_score)
 
     db.session.commit()
-
 
 #This function creates more example data in the database
 def second_example():
@@ -116,9 +113,6 @@ def second_example():
     db.session.add(player_3_leaderboard)
     db.session.add(player_4_leaderboard)
     db.session.commit()
-
-
-
 
 first_example()
 
