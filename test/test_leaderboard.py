@@ -1,5 +1,6 @@
 import unittest
 from sqlalchemy import exc
+from sqlalchemy import orm
 
 from src.app import create_app, db
 from src.orm_models import Leaderboard, GameType, Player
@@ -69,13 +70,30 @@ class TestPlayer(unittest.TestCase):
         game_type = self.create_game_type()
         player = self.create_player()
 
-        leaderboard_1 = Leaderboard(game_type = game_type)
-        leaderboard_2 = Leaderboard(player = player)
+        leaderboard_1 = Leaderboard(player = player, game_type = game_type)
+        leaderboard_2 = Leaderboard(player = player, game_type = game_type)
 
         db.session.add(leaderboard_1)
         db.session.add(leaderboard_2)
 
         with self.assertRaises(exc.IntegrityError):
+            db.session.commit()
+
+    def testDuplicateIdThrowsError(self):
+        game_type = self.create_game_type()
+        player_1 = self.create_player("Alice")
+        player_2 = self.create_player("Joe")
+
+        leaderboard_1 = Leaderboard(game_type = game_type, player=player_1, wins=5, losses=5)
+        
+        db.session.add(leaderboard_1)
+        db.session.commit()
+
+        leaderboard_2 = Leaderboard(id=leaderboard_1.id, game_type = game_type, player=player_2, wins=5, losses=5)
+
+        db.session.add(leaderboard_2)
+
+        with self.assertRaises(orm.exc.FlushError):
             db.session.commit()
 
     def create_game_type(self):
@@ -84,8 +102,8 @@ class TestPlayer(unittest.TestCase):
         db.session.commit()
         return game_type
     
-    def create_player(self):
-        player = Player(name="Alice")
+    def create_player(self, name="Alice"):
+        player = Player(name=name)
         db.session.add(player)
         db.session.commit()
         return player
