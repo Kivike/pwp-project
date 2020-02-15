@@ -91,7 +91,7 @@ class TestGame(unittest.TestCase):
         db.session.commit()
         assert len(Game.query.first().scores) == 2
 
-    def testSameGameIdThrowsError(self):
+    def testDuplicateIdThrowsError(self):
         game = self.create_basic_game()
 
         game_duplicate = Game(id=game.id, game_type=game.game_type, host=game.host)

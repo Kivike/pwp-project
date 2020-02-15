@@ -51,7 +51,7 @@ class TestPlayer(unittest.TestCase):
         with self.assertRaises(exc.IntegrityError):
             db.session.commit()
 
-    def testSameRowIdThrowsError(self):
+    def testDuplicateIdThrowsError(self):
         game = self.create_basic_game()
 
         player_1 = self.create_player("Player 1")
@@ -84,4 +84,3 @@ class TestPlayer(unittest.TestCase):
         db.session.add(player)
         db.session.commit()
         return player
-        
