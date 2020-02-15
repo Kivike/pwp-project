@@ -1,5 +1,8 @@
 import unittest
 import numbers
+
+from sqlalchemy import exc
+
 from src.app import create_app, db
 from src.orm_models import GameType, Player, Game, PlayerScore
 
@@ -16,7 +19,7 @@ class TestGame(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def testCreateBasicGame(self):
+    def testCreateAndDeleteValidGame(self):
         self.create_basic_game()
 
         assert Game.query.count() == 1
@@ -27,6 +30,35 @@ class TestGame(unittest.TestCase):
 
         assert db_game.host_id == db_player.id
         assert db_game.game_type_id == db_game_type.id
+        assert db_game.created_at is not None
+
+        db.session.delete(db_game)
+        db.session.commit()
+
+        assert Game.query.count() == 0
+
+    def testCreateGameWithoutGameTypeThrowsError(self):
+        host = Player(name="Test player")
+        game = Game(host=host)
+
+        db.session.add(host)
+        db.session.add(game)
+
+        with self.assertRaises(exc.IntegrityError):
+            db.session.commit()
+    
+    def testFinishGame(self):
+        game = self.create_basic_game()
+
+    def testCreateGameWithoutHostThrowsError(self):
+        game_type = GameType(name="chess")
+        game = Game(game_type = game_type)
+
+        db.session.add(game_type)
+        db.session.add(game)
+
+        with self.assertRaises(exc.IntegrityError):
+            db.session.commit()
 
     def testAssignPlayerScoresToGame(self):
         self.create_basic_game()
@@ -51,15 +83,24 @@ class TestGame(unittest.TestCase):
         db_game = Game.query.first()
         assert len(db_game.scores) == 3
 
+        db_game.scores.remove(player_score_a)
+
+        db.session.delete(player_score_a)
+        db.session.add(db_game)
+        db.session.commit()
+        assert len(Game.query.first().scores) == 2
+
     def create_basic_game(self):
         game_type = GameType(name="chess", max_players=3)
         host = Player(name="Test player")
-        game = Game(status=1, game_type=game_type, host=host, game_token="test")
+
+        game = Game(game_type=game_type, host=host, game_token="test")
 
         db.session.add(game_type)
         db.session.add(host)
         db.session.add(game)
         db.session.commit()
+        return game
 
 if __name__ == '__main__':
     unittest.main()
