@@ -101,17 +101,16 @@ class TestGame(unittest.TestCase):
         with self.assertRaises(orm.exc.FlushError):
             db.session.commit()
 
-    def create_basic_game(self, save=True):
+    def create_basic_game(self):
         game_type = GameType(name="chess", max_players=3)
         host = Player(name="Test player")
 
         game = Game(game_type=game_type, host=host, game_token="test")
 
-        if (save):
-            db.session.add(game_type)
-            db.session.add(host)
-            db.session.add(game)
-            db.session.commit()
+        db.session.add(game_type)
+        db.session.add(host)
+        db.session.add(game)
+        db.session.commit()
         return game
 
 if __name__ == '__main__':
