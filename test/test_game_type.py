@@ -1,5 +1,4 @@
 import unittest
-from unittest_data_provider import data_provider
 from sqlalchemy import exc
 
 from src.app import create_app, db
