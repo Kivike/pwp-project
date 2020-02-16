@@ -1,5 +1,6 @@
 import unittest
 from sqlalchemy import exc
+from sqlalchemy import orm
 
 from src.app import create_app, db
 from src.orm_models import GameType
@@ -77,3 +78,17 @@ class TestGame(unittest.TestCase):
 
         assert db_game_type.min_players == 3
         assert db_game_type.max_players == 4
+
+    def testDuplicateIdThrowsError(self):
+        game_type_1 = GameType(name="Hearts")
+
+        db.session.add(game_type_1)
+        db.session.commit()
+
+        game_type_2 = GameType(id=game_type_1.id, name="Seven")
+        
+        db.session.add(game_type_2)
+
+        with self.assertRaises(orm.exc.FlushError):
+            db.session.commit()
+            

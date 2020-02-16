@@ -1,5 +1,6 @@
 import unittest
 from sqlalchemy import exc
+from sqlalchemy import orm
 
 from src.app import create_app, db
 from src.orm_models import Player, PlayerScore, GameType, Game
@@ -50,6 +51,23 @@ class TestPlayer(unittest.TestCase):
         with self.assertRaises(exc.IntegrityError):
             db.session.commit()
 
+    def testDuplicateIdThrowsError(self):
+        game = self.create_basic_game()
+
+        player_1 = self.create_player("Player 1")
+        player_score_1 = PlayerScore(player=player_1, game=game)
+        db.session.add(player_1)
+        db.session.add(player_score_1)
+        db.session.commit()
+
+        player_2 = self.create_player("Player 2")
+        player_score_2 = PlayerScore(id=player_score_1.id, player=player_2, game=game)
+        db.session.add(player_2)
+        db.session.add(player_score_2)
+
+        with self.assertRaises(orm.exc.FlushError):
+            db.session.commit()
+
     def create_basic_game(self):
         game_type = GameType(name="chess", max_players=3)
         host = Player(name="Test player")
@@ -61,8 +79,8 @@ class TestPlayer(unittest.TestCase):
         db.session.commit()
         return game
 
-    def create_player(self):
-        player = Player(name="Alice")
+    def create_player(self, name="Alice"):
+        player = Player(name=name)
         db.session.add(player)
         db.session.commit()
         return player

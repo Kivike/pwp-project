@@ -1,5 +1,6 @@
 import unittest
 from sqlalchemy import exc
+from sqlalchemy import orm
 
 from src.app import create_app, db
 from src.orm_models import Player
@@ -48,3 +49,19 @@ class TestPlayer(unittest.TestCase):
 
         with self.assertRaises(exc.IntegrityError):
             db.session.commit()
+
+    def testDuplicateIdThrowsError(self):
+        player_1 = Player(name="Alice")
+
+        db.session.add(player_1)
+        db.session.commit()
+
+        player_2 = Player(id=player_1.id, name="Bob")
+
+        db.session.add(player_2)
+
+        with self.assertRaises(orm.exc.FlushError):
+            db.session.commit()
+
+    def testDuplicatePlayerIdThrowsError(self):
+        player_1 = Player()
