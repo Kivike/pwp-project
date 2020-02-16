@@ -5,7 +5,7 @@ from sqlalchemy import orm
 from src.app import create_app, db
 from src.orm_models import Leaderboard, GameType, Player
 
-class TestPlayer(unittest.TestCase):
+class TestLeaderboard(unittest.TestCase):
 
     def setUp(self):
         self.app = create_app('test')

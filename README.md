@@ -37,13 +37,17 @@ If you want to test running the application (well, there is no functionality yet
 
 ### Run the tests on the database
 
-In order to run the unit tests on the database, run __in the root directory of the project__:
+In order to run all the unit tests on the database, run __in the root directory of the project__:
 
 ``` python -m unittest ```
 
 To run a single test file, run __in the root directory of the project__:
 
-``` python -m test.name_of_file_without_py ```
+``` python -m unittest test.name_of_file_without_py ```
+
+To run a single test function, run __in the root directory of the project__ for example:
+
+``` python -m unittest test.test_player.TestPlayer.testDuplicateIdThrowsError ``` 
 
 
 

@@ -59,6 +59,7 @@ class Leaderboard(db.Model):
     game_type = db.relationship("GameType")
     player = db.relationship("Player")
 
+    #every player_id and game_type_id combination is unique
     __table__args__ = (db.UniqueConstraint('player_id', 'game_type_id', '_player_id_game_type_id_uc'),)
 
 #Optional, can be used for different tournaments

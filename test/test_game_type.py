@@ -5,7 +5,7 @@ from sqlalchemy import orm
 from src.app import create_app, db
 from src.orm_models import GameType
 
-class TestGame(unittest.TestCase):
+class TestGameType(unittest.TestCase):
 
     def setUp(self):
         self.app = create_app('test')

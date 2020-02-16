@@ -1,5 +1,7 @@
 from src.app import db, create_app
 from src.orm_models import Player, PlayerScore, GameType, Tournament, Game, Leaderboard 
+from sqlalchemy.sql import func
+import datetime
 
 '''This is used to create an example populated database. Can be run from 
 the root folder of the project with 'python -m src.example' '''
@@ -26,11 +28,11 @@ def first_example():
     #Example game type
     game_type = GameType(name="chess", max_players=3)
 
-    #Create a chess tournament
-    tournament = Tournament(name="Chess Tournament 1")
+    #Create a chess tournament (created_at defaults to func.now() but is here as an example)
+    tournament = Tournament(name="Chess Tournament 1", status=1, created_at=func.now())
 
-    #Initialize a game and add the players
-    chess_game = Game(status=1, game_type=game_type, host=player_1, tournament=tournament, game_token="chess_token")
+    #Initialize a game and add the players (created_at defaults to func.now() but is here as an example)
+    chess_game = Game(status=1, game_type=game_type, host=player_1, tournament=tournament, game_token="chess_token", created_at=func.now())
 
     #Initial player scores, the points are optional
     player_1_score = PlayerScore(player=player_1, game=chess_game)
@@ -72,13 +74,13 @@ def second_example():
 
     #No tournament this time as it is optional
 
-    #Initialize a game and add the players
-    hearts_game = Game(status=1, game_type=game_type, host=player_1, game_token="hearts_token")
+    #Initialize a game and add the players, in this example game has already ended
+    hearts_game = Game(status=0, game_type=game_type, host=player_1, game_token="hearts_token", created_at=datetime.datetime.now()-datetime.timedelta(days=5), finished_at=datetime.datetime.now()-datetime.timedelta(days=2))
 
     #Player scores, this time they have scores
     player_1_score = PlayerScore(player=player_1, score=22, game=hearts_game)
     player_2_score = PlayerScore(player=player_2, score=35, game=hearts_game)
-    player_3_score = PlayerScore(player=player_3, score=95, game=hearts_game)
+    player_3_score = PlayerScore(player=player_3, score=102, game=hearts_game)
     player_4_score = PlayerScore(player=player_4, score=24, game=hearts_game)
 
     #Connect the players scores to the game
