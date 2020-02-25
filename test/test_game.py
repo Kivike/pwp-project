@@ -38,7 +38,7 @@ class TestGame(unittest.TestCase):
 
         assert Game.query.count() == 0
 
-    def testCreateGameWithoutGameTypeThrowsError(self):
+    def testCreateGameWithoutGameTypeAllowed(self):
         host = Player(name="Test player")
         game = Game(host=host, game_token="12345")
 
@@ -51,7 +51,7 @@ class TestGame(unittest.TestCase):
     def testFinishGame(self):
         game = self.create_basic_game()
 
-    def testCreateGameWithoutHostThrowsError(self):
+    def testCreateGameWithoutHostAllowed(self):
         game_type = GameType(name="chess")
         game = Game(game_type = game_type, game_token="12345")
 
