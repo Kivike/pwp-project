@@ -40,26 +40,26 @@ class TestGame(unittest.TestCase):
 
     def testCreateGameWithoutGameTypeThrowsError(self):
         host = Player(name="Test player")
-        game = Game(host=host)
+        game = Game(host=host, game_token="12345")
 
         db.session.add(host)
         db.session.add(game)
+        db.session.commit()
 
-        with self.assertRaises(exc.IntegrityError):
-            db.session.commit()
-    
+        assert Game.query.count() == 1
+
     def testFinishGame(self):
         game = self.create_basic_game()
 
     def testCreateGameWithoutHostThrowsError(self):
         game_type = GameType(name="chess")
-        game = Game(game_type = game_type)
+        game = Game(game_type = game_type, game_token="12345")
 
         db.session.add(game_type)
         db.session.add(game)
+        db.session.commit()
 
-        with self.assertRaises(exc.IntegrityError):
-            db.session.commit()
+        assert Game.query.count() == 1
 
     def testAssignPlayerScoresToGame(self):
         self.create_basic_game()
