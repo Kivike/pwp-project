@@ -6,6 +6,7 @@ from sqlalchemy.sql import func
 #Represents a single match
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    accessname = db.Column(db.String(255), unique=True, nullable=False)
     status = db.Column(db.Integer, default=0) #1 if active, 0 if not active
     game_type_id = db.Column(db.Integer, db.ForeignKey("game_type.id", ondelete="SET NULL"))
     host_id = db.Column(db.Integer, db.ForeignKey("player.id", ondelete="SET NULL")) #One of the players has to be a host

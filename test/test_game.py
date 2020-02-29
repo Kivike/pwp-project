@@ -40,7 +40,7 @@ class TestGame(unittest.TestCase):
 
     def testCreateGameWithoutGameTypeAllowed(self):
         host = Player(name="Test player")
-        game = Game(host=host, game_token="12345")
+        game = Game(accessname="notypegame", host=host, game_token="12345")
 
         db.session.add(host)
         db.session.add(game)
@@ -53,7 +53,7 @@ class TestGame(unittest.TestCase):
 
     def testCreateGameWithoutHostAllowed(self):
         game_type = GameType(name="chess")
-        game = Game(game_type = game_type, game_token="12345")
+        game = Game(accessname="hostlessgame", game_type = game_type, game_token="12345")
 
         db.session.add(game_type)
         db.session.add(game)
@@ -105,7 +105,7 @@ class TestGame(unittest.TestCase):
         game_type = GameType(name="chess", max_players=3)
         host = Player(name="Test player")
 
-        game = Game(game_type=game_type, host=host, game_token="test")
+        game = Game(accessname="basicgame", game_type=game_type, host=host, game_token="test")
 
         db.session.add(game_type)
         db.session.add(host)
