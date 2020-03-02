@@ -17,7 +17,7 @@ class Game(db.Model):
 
     #Relationships to other models
     game_type = db.relationship("GameType", back_populates="game")
-    host = db.relationship("Player")
+    host = db.relationship("Player", back_populates="game")
     scores = db.relationship("PlayerScore", cascade="all, delete-orphan", back_populates="game")
     tournament = db.relationship("Tournament", back_populates="game")
 
@@ -27,6 +27,7 @@ class Player(db.Model):
     name = db.Column(db.VARCHAR(255), nullable=False, unique=True, index=True)
     score = db.relationship("PlayerScore", cascade="all, delete-orphan", back_populates="player")
     lboard = db.relationship("Leaderboard", cascade="all, delete-orphan", back_populates="player")
+    game = db.relationship("Game", back_populates="host")
 
 #The score of a player in a match
 #This also connects players and games to each other

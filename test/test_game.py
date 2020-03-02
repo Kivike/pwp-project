@@ -5,7 +5,7 @@ from sqlalchemy import exc
 from sqlalchemy import orm
 
 from src.app import create_app, db
-from src.orm_models import GameType, Player, Game, PlayerScore
+from src.orm_models import GameType, Player, Game, PlayerScore, Tournament
 
 class TestGame(unittest.TestCase):
 
@@ -101,6 +101,49 @@ class TestGame(unittest.TestCase):
         with self.assertRaises(orm.exc.FlushError):
             db.session.commit()
 
+    #Test deletion of foreign keys
+    def testPlayerAndGameTypeDeletion(self):
+        self.create_basic_game()
+
+        db_game = Game.query.first()
+        db_player = Player.query.first()
+        db_game_type = GameType.query.first()
+        
+        assert Player.query.count() == 1
+        assert db_game.host_id == db_player.id
+
+        db.session.delete(db_player)
+        db.session.commit()
+        
+        assert Player.query.count() == 0
+        assert db_game.host_id is None
+
+
+        assert GameType.query.count() == 1
+        assert db_game.game_type_id == db_game_type.id
+
+        db.session.delete(db_game_type)
+        db.session.commit()
+
+        assert GameType.query.count() == 0
+        assert db_game.game_type_id is None
+
+    def testTournamentDeletion(self):
+        self.create_game_with_tournament()
+
+        db_tournament = Tournament.query.first()
+        db_game = Game.query.first()
+
+        assert Tournament.query.count() == 1
+        assert db_game.tournament_id == db_tournament.id
+
+        db.session.delete(db_tournament)
+        db.session.commit()
+
+        assert Tournament.query.count() == 0
+        assert db_game.tournament_id is None
+        
+
     def create_basic_game(self):
         game_type = GameType(name="chess", max_players=3)
         host = Player(name="Test player")
@@ -109,6 +152,20 @@ class TestGame(unittest.TestCase):
 
         db.session.add(game_type)
         db.session.add(host)
+        db.session.add(game)
+        db.session.commit()
+        return game
+
+    def create_game_with_tournament(self):
+        game_type = GameType(name="chess", max_players=3)
+        host = Player(name="Test player")
+        tournament = Tournament(name="test tournament")
+
+        game = Game(accessname="basicgame", game_type=game_type, host=host, game_token="test", tournament=tournament)
+
+        db.session.add(game_type)
+        db.session.add(host)
+        db.session.add(tournament)
         db.session.add(game)
         db.session.commit()
         return game
