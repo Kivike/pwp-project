@@ -18,7 +18,7 @@ class TestPlayerScore(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def testCreateAndDeleteValidPlayer(self):
+    def testCreateAndDeleteValidPlayerScore(self):
         player = self.create_player()
         game = self.create_basic_game()
         player_score = PlayerScore(game=game, player=player)
@@ -68,10 +68,46 @@ class TestPlayerScore(unittest.TestCase):
         with self.assertRaises(orm.exc.FlushError):
             db.session.commit()
 
+    def testPlayerDeletionDeletesPlayerScore(self):
+        game = self.create_basic_game()
+
+        player_1 = self.create_player("Player 1")
+        player_score_1 = PlayerScore(player=player_1, game=game)
+        db.session.add(player_1)
+        db.session.add(player_score_1)
+        db.session.commit()
+
+        assert PlayerScore.query.count() == 1
+        assert Player.query.count() == 2
+
+        db.session.delete(player_1)
+        db.session.commit()
+
+        assert Player.query.count() == 1
+        assert PlayerScore.query.count() == 0
+        
+    def testGameDeletionDeletesPlayerScore(self):
+        game = self.create_basic_game()
+
+        player_1 = self.create_player("Player 1")
+        player_score_1 = PlayerScore(player=player_1, game=game)
+        db.session.add(player_1)
+        db.session.add(player_score_1)
+        db.session.commit()
+
+        assert Game.query.count() == 1
+        assert PlayerScore.query.count() == 1
+
+        db.session.delete(game)
+        db.session.commit()
+
+        assert Game.query.count() == 0
+        assert PlayerScore.query.count() == 0
+
     def create_basic_game(self):
         game_type = GameType(name="chess", max_players=3)
         host = Player(name="Test player")
-        game = Game(game_type=game_type, host=host, game_token="test")
+        game = Game(accessname="basicgame", game_type=game_type, host=host, game_token="test")
 
         db.session.add(game_type)
         db.session.add(host)

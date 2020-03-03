@@ -6,6 +6,7 @@ from sqlalchemy.sql import func
 #Represents a single match
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    accessname = db.Column(db.String(255), unique=True, nullable=False)
     status = db.Column(db.Integer, default=0) #1 if active, 0 if not active
     game_type_id = db.Column(db.Integer, db.ForeignKey("game_type.id", ondelete="SET NULL"))
     host_id = db.Column(db.Integer, db.ForeignKey("player.id", ondelete="SET NULL")) #One of the players has to be a host
@@ -16,25 +17,28 @@ class Game(db.Model):
 
     #Relationships to other models
     game_type = db.relationship("GameType", back_populates="game")
-    host = db.relationship("Player")
-    scores = db.relationship("PlayerScore", back_populates="game")
+    host = db.relationship("Player", back_populates="game")
+    scores = db.relationship("PlayerScore", cascade="all, delete-orphan", back_populates="game")
     tournament = db.relationship("Tournament", back_populates="game")
 
 #Represents a single player, only name defined 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.VARCHAR(255), nullable=False, unique=True, index=True)
+    score = db.relationship("PlayerScore", cascade="all, delete-orphan", back_populates="player")
+    lboard = db.relationship("Leaderboard", cascade="all, delete-orphan", back_populates="player")
+    game = db.relationship("Game", back_populates="host")
 
 #The score of a player in a match
 #This also connects players and games to each other
 class PlayerScore(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    player_id = db.Column(db.Integer, db.ForeignKey("player.id"), nullable=False)
+    player_id = db.Column(db.Integer, db.ForeignKey("player.id", ondelete="CASCADE"), nullable=False)
     score = db.Column(db.Float(24))
-    game_id = db.Column(db.Integer, db.ForeignKey("game.id"), nullable=False)
+    game_id = db.Column(db.Integer, db.ForeignKey("game.id", ondelete="CASCADE"), nullable=False)
 
     #Relationships to other models
-    player = db.relationship("Player")
+    player = db.relationship("Player", back_populates="score")
     game = db.relationship("Game", back_populates="scores")
 
 #A type of game, used to differentiate different kind of games from each other 
@@ -46,6 +50,7 @@ class GameType(db.Model):
 
     #Relationships to other models
     game = db.relationship("Game", back_populates="game_type")
+    lboard = db.relationship("Leaderboard", cascade="all, delete-orphan", back_populates="game_type")
 
 #Used to track how well a player has done in games of different game types
 class Leaderboard(db.Model):
@@ -56,8 +61,8 @@ class Leaderboard(db.Model):
     losses = db.Column(db.Integer, nullable=False)
 
     #Relationships to other models
-    game_type = db.relationship("GameType")
-    player = db.relationship("Player")
+    game_type = db.relationship("GameType", back_populates="lboard")
+    player = db.relationship("Player", back_populates="lboard")
 
     #every player_id and game_type_id combination is unique
     __table__args__ = (db.UniqueConstraint('player_id', 'game_type_id', '_player_id_game_type_id_uc'),)

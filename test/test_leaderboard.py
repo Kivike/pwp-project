@@ -96,6 +96,42 @@ class TestLeaderboard(unittest.TestCase):
         with self.assertRaises(orm.exc.FlushError):
             db.session.commit()
 
+    def testGameTypeDeletionDeletesLeaderboard(self):
+        game_type = self.create_game_type()
+        player = self.create_player("Alice")
+
+        leaderboard = Leaderboard(game_type = game_type, player=player, wins=5, losses=5)
+
+        db.session.add(leaderboard)
+        db.session.commit()
+
+        assert GameType.query.count() == 1
+        assert Leaderboard.query.count() == 1
+
+        db.session.delete(game_type)
+        db.session.commit()
+
+        assert GameType.query.count() == 0
+        assert Leaderboard.query.count() == 0
+        
+    def testPlayerDeletionDeletesLeaderboard(self):
+        game_type_2 = self.create_game_type()
+        player_2 = self.create_player("Bob")
+
+        leaderboard_2 = Leaderboard(game_type = game_type_2, player=player_2, wins=5, losses=5)
+
+        db.session.add(leaderboard_2)
+        db.session.commit()
+        assert Player.query.count() == 1
+        assert Leaderboard.query.count() == 1
+
+        db.session.delete(player_2)
+        db.session.commit()
+
+        assert Player.query.count() == 0
+        assert Leaderboard.query.count() == 0
+
+
     def create_game_type(self):
         game_type = GameType(name="chess", max_players=3)
         db.session.add(game_type)
