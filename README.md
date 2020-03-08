@@ -42,6 +42,7 @@ In order to run all the unit tests on the database with coverage reporting, run 
 ``` coverage run -m unittest -v && coverage report ```
 
 To run all the unit tests without coverage reporting, run __in the root directory of the project__:
+
 ``` python -m unittest -v ```
 
 To just run a single test file, run __in the root directory of the project__:
