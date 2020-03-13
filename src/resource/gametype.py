@@ -8,11 +8,11 @@ class GametypeCollection(Resource):
         pass #TODO
 
 class Gametype(Resource):
-    def get(self):
+    def get(self, gametype_name):
         pass #TODO
 
-    def put(self):
+    def put(self, gametype_name):
         pass #TODO
 
-    def delete(self):
+    def delete(self, gametype_name):
         pass #TODO

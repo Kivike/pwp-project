@@ -8,11 +8,11 @@ class TournamentCollection(Resource):
         pass #TODO
 
 class Tournament(Resource):
-    def get(self):
+    def get(self, tournament_token):
         pass #TODO
 
-    def put(self):
+    def put(self, tournament_token):
         pass #TODO
 
-    def delete(self):
+    def delete(self, tournament_token):
         pass #TODO

@@ -8,11 +8,11 @@ class PlayerCollection(Resource):
         pass #TODO
 
 class Player(Resource):
-    def get(self):
+    def get(self, player_name):
         pass #TODO
 
-    def put(self):
+    def put(self, player_name):
         pass #TODO
 
-    def delete(self):
+    def delete(self, player_name):
         pass #TODO

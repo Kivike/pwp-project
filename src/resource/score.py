@@ -8,11 +8,11 @@ class GameScoreboard(Resource):
         pass #TODO
     
 class PlayerScore(Resource):
-    def get(self):
+    def get(self, game_token, player_name):
         pass #TODO
 
-    def put(self):
+    def put(self, game_token, player_name):
         pass #TODO
 
-    def delete(self):
+    def delete(self, game_token, player_name):
         pass #TODO
