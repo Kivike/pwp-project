@@ -38,15 +38,19 @@ Also, it was discussed that no API calls should be done with database IDs. So, t
 *ONLY USED BY COURSE STAFF: Additional comments from the course staff*
 
 ## Meeting 3.
-* **DATE:**
-* **ASSISTANTS:**
+* **DATE:** 17.3.2020
+* **ASSISTANTS:** Mika Oja
 
 ### Minutes
-*Summary of what was discussed during the meeting*
+There are quite a lot of resources currently. Only part (at least 6) of them have to be implemented. We have to decide what will be implemented and what will be left not implemented. 
+
+In the state diagram, there was a disconnection between the left and the right side of the diagram. An "up" link should be added to Game scoreboard. Also, Tournament, Player and Game collections should have links between them to help the user move on collection level. There should also be a link from Game back to Tournament, which did not exist at the time of the meeting. Otherwise, the diagram looked quite alright.
+
+Apiary documentation looks okay. 
 
 ### Action points
-*List here the actions points discussed with assistants*
 
+1. Add new links to the API. Add an "up" link from Game scoreboard to Game. Add links between Tournament, Player and Game collections. Add a link from Game back to Tournament.
 
 ### Comments from staff
 *ONLY USED BY COURSE STAFF: Additional comments from the course staff*
