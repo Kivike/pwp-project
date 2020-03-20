@@ -1,7 +1,7 @@
 from src.resource.game import Game, GameCollection
 from src.resource.gametype import Gametype, GametypeCollection
 from src.resource.leaderboard import LeaderboardGametype, LeaderboardPlayer
-from src.resource.player import Player, PlayerCollection
+from src.resource.player import PlayerResource, PlayerCollection
 from src.resource.score import GameScoreboard, PlayerScore
 from src.resource.tournament import Tournament, TournamentCollection
 
@@ -31,7 +31,7 @@ def route_app(app):
         "/api/players/<player_name>/leaderboard/"
     )
 
-    api.add_resource(Player, "/api/players/<player_name>/")
+    api.add_resource(PlayerResource, "/api/players/<player_name>/")
     api.add_resource(PlayerCollection, "/api/players/")
 
     api.add_resource(GameScoreboard, "/api/games/<game_token>/scoreboard/")

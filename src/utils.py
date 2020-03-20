@@ -100,10 +100,10 @@ class PlayerBuilder(MasonBuilder):
 
     def add_control_edit_player(self, name):
         schema = self.playerSchema()
-        self.add_control(ctrl_name="edit", href=url_for("player", player_name=name), method="PUT", encoding="json", schema=schema, title="Modify the player")
+        self.add_control(ctrl_name="edit", href=url_for("playerresource", player_name=name), method="PUT", encoding="json", schema=schema, title="Modify the player")
     
     def add_control_delete_player(self, name):
-        self.add_control(ctrl_name="gamescr:delete", href=url_for("player", player_name=name), method="DELETE", title="Delete this player")
+        self.add_control(ctrl_name="gamescr:delete", href=url_for("playerresource", player_name=name), method="DELETE", title="Delete this player")
     
     def add_control_leaderboard(self, name):
         self.add_control(ctrl_name="gamescr:leaderboard", href=url_for("leaderboardplayer", player_name=name), title="Statistics of this player")
