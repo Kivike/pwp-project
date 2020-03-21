@@ -88,7 +88,7 @@ class TestPlayer(unittest.TestCase):
         json_object = json.loads(response.data)
 
         assert json_object is not None
-        assert len(json_object["name"]) == "Testaaja"
+        assert json_object["name"] == "Testaaja", json_object["name"]
 
     def test_valid_rename_player(self):
         self.client.post(COLLECTION_URL, data=dict(
