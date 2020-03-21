@@ -52,6 +52,10 @@ class TestPlayer(unittest.TestCase):
         response = self.client.get(COLLECTION_URL)
 
         assert response.status_code == 200
+        assert response.data is not None
+        json_object = json.loads(response.data)
+        assert json_object is not None
+        assert len(json_object['items']) == 0
 
         self.client.post(COLLECTION_URL, data=dict(
             name="Player A"
@@ -63,11 +67,9 @@ class TestPlayer(unittest.TestCase):
         response = self.client.get(COLLECTION_URL)
 
         assert response.status_code == 200
-
         assert response.data is not None
         json_object = json.loads(response.data)
         assert json_object is not None
-
         assert len(json_object['items']) == 2
 
     def test_get_player(self):
