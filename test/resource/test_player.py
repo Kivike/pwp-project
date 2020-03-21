@@ -7,7 +7,7 @@ from src.orm_models import Player
 
 import json
 
-ITEM_URL = "/api/player/<player_name>/"
+ITEM_URL = "/api/players/<player_name>/"
 COLLECTION_URL = "/api/players/"
 
 class TestPlayer(unittest.TestCase):
