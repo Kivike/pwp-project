@@ -3,7 +3,7 @@ from sqlalchemy import exc
 from sqlalchemy import orm
 
 from src.app import create_app, db
-from src.orm_models import GameType
+from src.orm_models import Player
 
 import json
 
@@ -28,54 +28,58 @@ class TestPlayer(unittest.TestCase):
         url = ITEM_URL.replace('<player_name>', 'idontexist')
         response = self.client.get(url)
 
-        assert response.status_code == 404
+        assert response.status_code == 404, response.status_code
 
     def test_delete_non_existing_player(self):
         url = ITEM_URL.replace('<player_name>', 'idontexist')
         response = self.client.get(url)
 
-        assert response.status_code == 404
+        assert response.status_code == 404, response.status_code
 
-    def test_create_and_delete_player(self):
-        create_response = self.client.post(COLLECTION_URL, data=dict(
+    def test_create_player(self):
+        response = self.client.post(COLLECTION_URL, data=dict(
             name="Testaaja"
         ))
 
-        assert create_response.status_code == 201
+        assert response.status_code == 201, response.status_code
+
+        player = Player.query.first()
+        assert isinstance(player, Player)
+
+    def test_delete_player(self):
+        db.session.add(Player(name="Testaaja"))
+        db.session.commit()
 
         delete_url = ITEM_URL.replace('<player_name>', 'Testaaja')
-        delete_response = self.client.delete(delete_url)
+        response = self.client.delete(delete_url)
 
-        assert delete_response.status_code == 204
+        assert response.status_code == 204, response.status_code
 
     def test_get_player_collection(self):
         response = self.client.get(COLLECTION_URL)
 
-        assert response.status_code == 200
+        assert response.status_code == 200, response.status_code
         assert response.data is not None
         json_object = json.loads(response.data)
         assert json_object is not None
         assert len(json_object['items']) == 0
 
-        self.client.post(COLLECTION_URL, data=dict(
-            name="Player A"
-        ))
-        self.client.post(COLLECTION_URL, data=dict(
-            name="Player B"
-        ))
+        db.session.add(Player(name="Player A"))
+        db.session.add(Player(name="Player B"))
+        db.session.commit()
 
         response = self.client.get(COLLECTION_URL)
 
-        assert response.status_code == 200
+        assert response.status_code == 200, response.status_code
         assert response.data is not None
         json_object = json.loads(response.data)
         assert json_object is not None
         assert len(json_object['items']) == 2
 
     def test_get_player(self):
-        self.client.post(COLLECTION_URL, data=dict(
-            name="Testaaja"
-        ))
+        player = Player(name="Testaaja")
+        db.session.add(player)
+        db.session.commit()
 
         get_url = ITEM_URL.replace("<player_name>", "Testaaja")
         response = self.client.get(get_url)
@@ -96,7 +100,7 @@ class TestPlayer(unittest.TestCase):
             name="Newname"
         ))
 
-        assert response.status_code == 204
+        assert response.status_code == 204, response.status_code
 
     def test_rename_player_existing_name(self):
         self.client.post(COLLECTION_URL, data=dict(
@@ -110,7 +114,7 @@ class TestPlayer(unittest.TestCase):
         response = self.client.put(edit_url, data=dict(
             name="Player B"
         ))
-        assert response.status_code == 409
+        assert response.status_code == 409, response.status_code
 
     def test_edit_player_invalid_schema(self):
         self.client.post(COLLECTION_URL, data=dict(
@@ -120,4 +124,4 @@ class TestPlayer(unittest.TestCase):
         response = self.client.put(edit_url, data=dict(
             color="green"
         ))
-        assert response.status_code == 400
+        assert response.status_code == 400, response.status_code

@@ -17,7 +17,7 @@ class TestPlayer(unittest.TestCase):
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
-
+    
     def testCreateAndDeleteValidPlayer(self):
         player = Player(name="Alice")
 
