@@ -7,7 +7,7 @@ class TournamentCollection(Resource):
     def post(self):
         pass #TODO
 
-class Tournament(Resource):
+class TournamentResource(Resource):
     def get(self, tournament_token):
         pass #TODO
 

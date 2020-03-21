@@ -7,7 +7,7 @@ class GameScoreboard(Resource):
     def post(self):
         pass #TODO
     
-class PlayerScore(Resource):
+class PlayerScoreResource(Resource):
     def get(self, game_token, player_name):
         pass #TODO
 
