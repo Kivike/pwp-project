@@ -7,7 +7,7 @@ class GameCollection(Resource):
     def post(self):
         pass #TODO
 
-class Game(Resource):
+class GameResource(Resource):
     def get(self, game_token):
         pass #TODO
 
