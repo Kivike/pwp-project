@@ -1,10 +1,10 @@
 from flask_restful import Resource
 
 class GameScoreboard(Resource):
-    def get(self, game_name):
+    def get(self, game_token):
         pass #TODO
 
-    def post(self, game_name):
+    def post(self, game_token):
         pass #TODO
     
 class PlayerScoreResource(Resource):
