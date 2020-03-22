@@ -1,11 +1,11 @@
 import unittest
+import json
+
 from sqlalchemy import exc
 from sqlalchemy import orm
 
 from src.app import create_app, db
 from src.orm_models import Player
-
-import json
 
 ITEM_URL = "/api/players/<player_name>/"
 COLLECTION_URL = "/api/players/"
@@ -36,10 +36,10 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 404, response.status_code
 
-    def test_create_player(self):
-        response = self.client.post(COLLECTION_URL, data=dict(
+    def test_post_valid_player(self):
+        response = self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Testaaja"
-        ))
+        )))
 
         assert response.status_code == 201, response.status_code
 
@@ -91,24 +91,24 @@ class TestPlayer(unittest.TestCase):
         assert json_object["name"] == "Testaaja", json_object["name"]
 
     def test_valid_rename_player(self):
-        self.client.post(COLLECTION_URL, data=dict(
+        self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Testaaja"
-        ))
+        )))
 
         edit_url = ITEM_URL.replace('<player_name>', 'Testaaja')
-        response = self.client.put(edit_url, data=dict(
+        response = self.client.put(edit_url, data=json.dumps(dict(
             name="Newname"
-        ))
+        )))
 
         assert response.status_code == 204, response.status_code
 
     def test_rename_player_existing_name(self):
-        self.client.post(COLLECTION_URL, data=dict(
+        self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Player A"
-        ))
-        self.client.post(COLLECTION_URL, data=dict(
+        )))
+        self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Player B"
-        ))
+        )))
 
         edit_url = ITEM_URL.replace('<player_name>', 'Player A')
         response = self.client.put(edit_url, data=dict(
@@ -117,11 +117,11 @@ class TestPlayer(unittest.TestCase):
         assert response.status_code == 409, response.status_code
 
     def test_edit_player_invalid_schema(self):
-        self.client.post(COLLECTION_URL, data=dict(
+        self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Testaaja"
-        ))
+        )))
         edit_url = ITEM_URL.replace('<player_name>', 'Testaaja')
-        response = self.client.put(edit_url, data=dict(
+        response = self.client.put(edit_url, data=json.dumps(dict(
             color="green"
-        ))
+        )))
         assert response.status_code == 400, response.status_code
