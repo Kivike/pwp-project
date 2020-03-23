@@ -96,17 +96,21 @@ class PlayerBuilder(MasonBuilder):
 
     def add_control_add_player(self):
         schema = self.playerSchema()
-        self.add_control(ctrl_name="gamescr:add-player", href=url_for("playercollection"), method="POST", encoding="json", schema=schema, title="Add a new player")
+        self.add_control(ctrl_name="gamescr:add-player", href=url_for("playercollection"), 
+            method="POST", encoding="json", schema=schema, title="Add a new player")
 
     def add_control_edit_player(self, name):
         schema = self.playerSchema()
-        self.add_control(ctrl_name="edit", href=url_for("playerresource", player_name=name), method="PUT", encoding="json", schema=schema, title="Modify the player")
+        self.add_control(ctrl_name="edit", href=url_for("playerresource", player_name=name),
+            method="PUT", encoding="json", schema=schema, title="Modify the player")
     
     def add_control_delete_player(self, name):
-        self.add_control(ctrl_name="gamescr:delete", href=url_for("playerresource", player_name=name), method="DELETE", title="Delete this player")
+        self.add_control(ctrl_name="gamescr:delete", href=url_for("playerresource", player_name=name), 
+            method="DELETE", title="Delete this player")
     
     def add_control_leaderboard(self, name):
-        self.add_control(ctrl_name="gamescr:leaderboard", href=url_for("leaderboardplayer", player_name=name), title="Statistics of this player")
+        self.add_control(ctrl_name="gamescr:leaderboard", href=url_for("leaderboardplayer", player_name=name), 
+            title="Statistics of this player")
 
 class GameBuilder(MasonBuilder):
 
@@ -174,27 +178,34 @@ class GameBuilder(MasonBuilder):
 
     def add_control_add_game(self):
         schema = self.gameSchema()
-        self.add_control(ctrl_name="gamescr:add-game", href=url_for("gamecollection"), method="POST", encoding="json", schema=schema, title="Add a new game")
+        self.add_control(ctrl_name="gamescr:add-game", href=url_for("gamecollection"), method="POST", 
+            encoding="json", schema=schema, title="Add a new game")
 
     def add_control_gametype(self, name):
-        self.add_control(ctrl_name="gamescr:gametype", href=url_for("gametyperesource", gametype_name=name), title="Gametype of this game")
+        self.add_control(ctrl_name="gamescr:gametype", href=url_for("gametyperesource", gametype_name=name), 
+            title="Gametype of this game")
 
     def add_control_scores(self, name):
-        self.add_control(ctrl_name="gamescr:scores", href=url_for("gamescoreboard", game_token=name), title="Scores of players in this game")
+        self.add_control(ctrl_name="gamescr:scores", href=url_for("gamescoreboard", game_token=name), 
+            title="Scores of players in this game")
 
     def add_control_tournament(self, name):
-        self.add_control(ctrl_name="gamescr:tournament", href=url_for("tournamentresource", tournament_token=name), title="Tournament associated with this game")
+        self.add_control(ctrl_name="gamescr:tournament", href=url_for("tournamentresource", tournament_token=name), 
+            title="Tournament associated with this game")
 
     def add_control_add_score(self, name):
         schema = self.scoreSchema()
-        self.add_control(ctrl_name="gamescr:add-score", href=url_for("gamescoreboard", game_token=name), method="POST", encoding="json", schema=schema, title="Add a new player to the game")
+        self.add_control(ctrl_name="gamescr:add-score", href=url_for("gamescoreboard", game_token=name), 
+            method="POST", encoding="json", schema=schema, title="Add a new player to the game")
 
     def add_control_edit_game(self, name):
         schema = self.gameSchema()
-        self.add_control(ctrl_name="edit", href=url_for("gameresource", game_token=name), method="PUT", encoding="json", schema=schema, title="Edit this game")
+        self.add_control(ctrl_name="edit", href=url_for("gameresource", game_token=name), method="PUT", 
+            encoding="json", schema=schema, title="Edit this game")
 
     def add_control_delete_game(self, name):
-        self.add_control(ctrl_name="gamescr:delete", href=url_for("gameresource", game_token=name), method="DELETE", title="Delete this game")
+        self.add_control(ctrl_name="gamescr:delete", href=url_for("gameresource", game_token=name), 
+            method="DELETE", title="Delete this game")
 
 class GametypeBuilder(MasonBuilder):
 
@@ -224,17 +235,21 @@ class GametypeBuilder(MasonBuilder):
 
     def add_control_add_gametype(self):
         schema = self.gametypeSchema()
-        self.add_control(ctrl_name="gamescr:add-gametype", href=url_for("gametypecollection"), method="POST", encoding="json", schema=schema, title="Add a new gametype")
+        self.add_control(ctrl_name="gamescr:add-gametype", href=url_for("gametypecollection"), method="POST", 
+            encoding="json", schema=schema, title="Add a new gametype")
 
     def add_control_edit_gametype(self, name):
         schema = self.gametypeSchema()
-        self.add_control(ctrl_name="edit", href=url_for("gametyperesource", gametype_name=name), method="PUT", encoding="json", schema=schema, title="Edit this gametype")
+        self.add_control(ctrl_name="edit", href=url_for("gametyperesource", gametype_name=name), method="PUT", 
+            encoding="json", schema=schema, title="Edit this gametype")
 
     def add_control_leaderboard(self, name):
-        self.add_control(ctrl_name="gamescr:leaderboard", href=url_for("leaderboardgametype", gametype_name=name), title="Leaderboard for this gametype")
+        self.add_control(ctrl_name="gamescr:leaderboard", href=url_for("leaderboardgametype", gametype_name=name), 
+            title="Leaderboard for this gametype")
 
     def add_control_delete_gametype(self, name):
-        self.add_control(ctrl_name="gamescr:delete", href=url_for("gametyperesource", gametype_name=name), method="DELETE", title="Delete this gametype")
+        self.add_control(ctrl_name="gamescr:delete", href=url_for("gametyperesource", gametype_name=name), 
+            method="DELETE", title="Delete this gametype")
 
 class scoreBuilder(MasonBuilder):
     #TODO
