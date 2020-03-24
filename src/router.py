@@ -1,9 +1,9 @@
-from src.resource.game import Game, GameCollection
-from src.resource.gametype import Gametype, GametypeCollection
+from src.resource.game import GameResource, GameCollection
+from src.resource.gametype import GametypeResource, GametypeCollection
 from src.resource.leaderboard import LeaderboardGametype, LeaderboardPlayer
-from src.resource.player import Player, PlayerCollection
-from src.resource.score import GameScoreboard, PlayerScore
-from src.resource.tournament import Tournament, TournamentCollection
+from src.resource.player import PlayerResource, PlayerCollection
+from src.resource.score import GameScoreboard, PlayerScoreResource
+from src.resource.tournament import TournamentResource, TournamentCollection
 
 from flask_restful import Api
 
@@ -14,10 +14,10 @@ def route_app(app):
     def index():
         return "Index"
 
-    api.add_resource(Game, "/api/games/<game_token>/")
+    api.add_resource(GameResource, "/api/games/<game_token>/")
     api.add_resource(GameCollection, "/api/games/")
 
-    api.add_resource(Gametype, "/api/gametypes/<gametype_name>/")
+    api.add_resource(GametypeResource, "/api/gametypes/<gametype_name>/")
     api.add_resource(GametypeCollection, "/api/gametypes/")
 
     api.add_resource(
@@ -31,11 +31,11 @@ def route_app(app):
         "/api/players/<player_name>/leaderboard/"
     )
 
-    api.add_resource(Player, "/api/players/<player_name>/")
+    api.add_resource(PlayerResource, "/api/players/<player_name>/")
     api.add_resource(PlayerCollection, "/api/players/")
 
     api.add_resource(GameScoreboard, "/api/games/<game_token>/scoreboard/")
-    api.add_resource(PlayerScore, "/api/games/<game_token>/scoreboard/<player_name>/")
+    api.add_resource(PlayerScoreResource, "/api/games/<game_token>/scoreboard/<player_name>/")
 
-    api.add_resource(Tournament, "/api/tournaments/<tournament_token>/")
+    api.add_resource(TournamentResource, "/api/tournaments/<tournament_token>/")
     api.add_resource(TournamentCollection, "/api/tournaments/")

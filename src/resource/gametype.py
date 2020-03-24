@@ -7,7 +7,7 @@ class GametypeCollection(Resource):
     def post(self):
         pass #TODO
 
-class Gametype(Resource):
+class GametypeResource(Resource):
     def get(self, gametype_name):
         pass #TODO
 

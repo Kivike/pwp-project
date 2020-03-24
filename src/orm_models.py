@@ -1,4 +1,4 @@
-from src.app import db
+from src.extensions import db
 from sqlalchemy.sql import func
 
 '''This file contains all the ORM models for the database'''

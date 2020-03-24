@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from config import config
 from src.router import route_app
 
-db = SQLAlchemy()
+from src.extensions import db
 
 def create_app(config_name):
     app = Flask(__name__)
