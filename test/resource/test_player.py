@@ -90,7 +90,7 @@ class TestPlayer(unittest.TestCase):
         assert json_object is not None
         assert json_object["name"] == "Testaaja", json_object["name"]
 
-    def test_valid_rename_player(self):
+    def test_put_player_valid_rename(self):
         self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Testaaja"
         )))
@@ -102,7 +102,7 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 204, response.status_code
 
-    def test_rename_player_existing_name(self):
+    def test_put_player_existing_name(self):
         self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Player A"
         )))
@@ -116,7 +116,7 @@ class TestPlayer(unittest.TestCase):
         ))
         assert response.status_code == 409, response.status_code
 
-    def test_edit_player_invalid_schema(self):
+    def test_put_player_invalid_schema(self):
         self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Testaaja"
         )))
@@ -125,3 +125,9 @@ class TestPlayer(unittest.TestCase):
             color="green"
         )))
         assert response.status_code == 400, response.status_code
+
+    def test_put_player_invalid_datatype(self):
+        response = self.client.post(COLLECTION_URL, data='notavalidjson')))
+
+        assert response.status_code == 415
+        
