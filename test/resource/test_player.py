@@ -39,7 +39,7 @@ class TestPlayer(unittest.TestCase):
     def test_post_valid_player(self):
         response = self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Testaaja"
-        )))
+        )), content_type='application/json')
 
         assert response.status_code == 201, response.status_code
 
@@ -90,44 +90,38 @@ class TestPlayer(unittest.TestCase):
         assert json_object is not None
         assert json_object["name"] == "Testaaja", json_object["name"]
 
-    def test_put_player_valid_rename(self):
+    def test_valid_rename_player(self):
         self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Testaaja"
-        )))
+        )), content_type='application/json')
 
         edit_url = ITEM_URL.replace('<player_name>', 'Testaaja')
         response = self.client.put(edit_url, data=json.dumps(dict(
             name="Newname"
-        )))
+        )), content_type='application/json')
 
-        assert response.status_code == 204, response.status_code
+        assert response.status_code == 201, response.status_code
 
-    def test_put_player_existing_name(self):
+    def test_rename_player_existing_name(self):
         self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Player A"
-        )))
+        )), content_type='application/json')
         self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Player B"
-        )))
+        )), content_type='application/json')
 
         edit_url = ITEM_URL.replace('<player_name>', 'Player A')
-        response = self.client.put(edit_url, data=dict(
+        response = self.client.put(edit_url, data=json.dumps(dict(
             name="Player B"
-        ))
+        )), content_type='application/json')
         assert response.status_code == 409, response.status_code
 
-    def test_put_player_invalid_schema(self):
+    def test_edit_player_invalid_schema(self):
         self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Testaaja"
-        )))
+        )), content_type='application/json')
         edit_url = ITEM_URL.replace('<player_name>', 'Testaaja')
         response = self.client.put(edit_url, data=json.dumps(dict(
             color="green"
-        )))
+        )), content_type='application/json')
         assert response.status_code == 400, response.status_code
-
-    def test_put_player_invalid_datatype(self):
-        response = self.client.post(COLLECTION_URL, data='notavalidjson')))
-
-        assert response.status_code == 415
-        
