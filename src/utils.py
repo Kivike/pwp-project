@@ -230,6 +230,8 @@ class GametypeBuilder(MasonBuilder):
         }
         return schema
 
+    #Controls for Gametype Collection and Resource
+
     def add_control_all_games(self):
         self.add_control("gamescr:all-games", href=url_for("gamecollection"), title="All games")
 
@@ -252,8 +254,47 @@ class GametypeBuilder(MasonBuilder):
             method="DELETE", title="Delete this gametype")
 
 class scoreBuilder(MasonBuilder):
-    #TODO
-    pass
+    
+    @staticmethod
+    def scoreSchema():
+        schema = {
+            "type": "object",
+            "required": ["player", "game", "score"]
+        }
+        props = schema["properties"] = {}
+        props["player"] = {
+            "description": "Name of the player",
+            "type": "string"
+        }
+        props["game"] = {
+            "description": "Access name of the game",
+            "type": "string"
+        }
+        props["score"] = {
+            "description": "Score of the player",
+            "type": "float"
+        }
+        return schema
+
+    #Controls for GameScoreboard and PlayerScoreResources
+
+    def add_control_add_score(self, name):
+        schema = self.scoreSchema()
+        self.add_control(ctrl_name="gamescr:add-score", href=url_for("gamescoreboard", game_token=name), 
+            method="POST", encoding="json", schema=schema, title="Add a new player to the game")
+
+    def add_control_edit_playerscore(self, game_token, player_name):
+        schema = self.scoreSchema()
+        self.add_control(ctrl_name="edit", href=url_for("playerscoreresource", game_token=game_token, 
+            player_name=player_name), method="PUT", encoding="json", schema=schema, title="Edit player's score")
+
+    def add_control_delete_gametype(self, game_token, player_name):
+        self.add_control(ctrl_name="gamescr:delete", href=url_for("playerscoreresource", game_token=game_token, 
+            player_name=player_name), method="DELETE", title="Delete this player from this game")
+
+    def add_control_player(self, player_name):
+        self.add_control(ctrl_name="gamescr:player", href=url_for("playerresource", player_name=player_name), 
+            title="Access the player of this score")
 
 
 def create_error_response(status_code, title, message=None):
