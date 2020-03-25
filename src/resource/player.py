@@ -19,6 +19,8 @@ class PlayerCollection(Resource):
     def get(self):
         items = []
         players = Player.query.all()
+        if players is None:
+            return Response(status=204)
         for player in players:
             name = player.name
             body = PlayerBuilder(
