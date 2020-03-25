@@ -253,7 +253,7 @@ class GametypeBuilder(MasonBuilder):
         self.add_control(ctrl_name="gamescr:delete", href=url_for("gametyperesource", gametype_name=name), 
             method="DELETE", title="Delete this gametype")
 
-class scoreBuilder(MasonBuilder):
+class ScoreBuilder(MasonBuilder):
     
     @staticmethod
     def scoreSchema():
