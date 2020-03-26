@@ -20,11 +20,11 @@ class GameCollection(Resource):
         pass #TODO
 
 class GameResource(Resource):
-    def get(self, game_token):
+    def get(self, game_name):
         pass #TODO
 
-    def put(self, game_token):
+    def put(self, game_name):
         pass #TODO
 
-    def delete(self, game_token):
+    def delete(self, game_name):
         pass #TODO
