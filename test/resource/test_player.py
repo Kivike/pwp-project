@@ -53,7 +53,7 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 204, response.status_code
 
-    def testNonExistingPlayer(self):
+    def testDeleteNonExistingPlayer(self):
         delete_url = ITEM_URL.replace('<player_name>', 'Santa Claus')
         response = self.client.delete(delete_url)
 
