@@ -39,7 +39,7 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 200, response.status_code
 
-    def test_post_valid_gametype(self):
+    def test_post_gametype(self):
         test_cases = [
             {
                 'min_players': 3,
@@ -60,24 +60,32 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 201, response.status_code
     
-    def test_post_invalid_schema_gametype(self):
+    def test_post_gametype_invalid_schema(self):
         response = self.client.post(COLLECTION_URL, data=dict(
             shoe_size=10
-        ))
+        ), content_type='application/json')
 
         assert response.status_code == 400, response.status_code
 
-    def test_post_invalid_mediatype_gametype(self):
+    def test_post_gametype_invalid_content(self):
         response = self.client.post(COLLECTION_URL, data="asdasd")
 
         assert response.status_code == 415, response.status_code
 
-    def test_post_duplicate_gametype(self):
+    def test_post_gametype_missing_contenttype(self):
+        gametype = dict(name="Chess")
+        response = self.client.post(
+            COLLECTION_URL,
+            data=gametype
+        )
+        assert response.status_code == 415, response.status_code
+
+    def test_post_gametype_duplicate(self):
         db.session.add(GameType(name="Chess"))
         db.session.commit()
 
         response = self.client.post(COLLECTION_URL, data=json.dumps(dict(
             name="Chess"
-        )))
+        )), content_type='application/json')
 
         assert response.status_code == 409, response.status_code
