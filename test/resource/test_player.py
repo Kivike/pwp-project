@@ -52,6 +52,7 @@ class TestPlayer(unittest.TestCase):
         response = self.client.delete(delete_url)
 
         assert response.status_code == 204, response.status_code
+        assert Player.query.count() == 0
 
     def testDeleteNonExistingPlayer(self):
         delete_url = ITEM_URL.replace('<player_name>', 'Santa Claus')
@@ -107,6 +108,7 @@ class TestPlayer(unittest.TestCase):
         )
 
         assert response.status_code == 201, response.status_code
+        assert Player.query.filter_by(name="Newname").count() == 1
 
     def testPutPlayerExistingName(self):
         self.postValidPlayer("Player A")
@@ -119,6 +121,8 @@ class TestPlayer(unittest.TestCase):
             content_type=('application/json')
         )
         assert response.status_code == 409, response.status_code
+        assert Player.query.filter_by(name="Player A").count() == 1
+        assert Player.query.filter_by(name="Player B").count() == 1
 
     def testPutPlayerInvalidSchema(self):
         self.postValidPlayer("Testaaja")
@@ -130,9 +134,10 @@ class TestPlayer(unittest.TestCase):
             content_type='application/json'
         )
         assert response.status_code == 400, response.status_code
+        assert Player.query.count() == 1
 
     def testPutPlayerInvalidDatatype(self):
-        response = self.client.post(
+        response = self.client.put(
             COLLECTION_URL,
             data='notavalidjson',
             content_type='application/json'
