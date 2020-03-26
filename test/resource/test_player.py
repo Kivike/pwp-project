@@ -24,27 +24,27 @@ class TestPlayer(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def test_get_non_existing_player(self):
+    def testGetNonExistingPlayer(self):
         url = ITEM_URL.replace('<player_name>', 'idontexist')
         response = self.client.get(url)
 
         assert response.status_code == 404, response.status_code
 
-    def test_delete_non_existing_player(self):
+    def testDeleteNonExistingPlayer(self):
         url = ITEM_URL.replace('<player_name>', 'idontexist')
         response = self.client.get(url)
 
         assert response.status_code == 404, response.status_code
 
-    def test_post_valid_player(self):
-        response = self.post_valid_player("Testaaja")
+    def testPostValidPlayer(self):
+        response = self.postValidPlayer("Testaaja")
 
         assert response.status_code == 201, response.status_code
 
         player = Player.query.first()
         assert isinstance(player, Player)
 
-    def test_delete_player(self):
+    def testDeletePlayer(self):
         db.session.add(Player(name="Testaaja"))
         db.session.commit()
 
@@ -53,7 +53,13 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 204, response.status_code
 
-    def test_get_player_collection(self):
+    def testNonExistingPlayer(self):
+        delete_url = ITEM_URL.replace('<player_name>', 'Santa Claus')
+        response = self.client.delete(delete_url)
+
+        assert response.status_code == 404, response.status_code
+
+    def testGetPlayerCollection(self):
         response = self.client.get(COLLECTION_URL)
 
         assert response.status_code == 200, response.status_code
@@ -74,7 +80,7 @@ class TestPlayer(unittest.TestCase):
         assert json_object is not None
         assert len(json_object['items']) == 2
 
-    def test_get_player(self):
+    def testGetPlayer(self):
         player = Player(name="Testaaja")
         db.session.add(player)
         db.session.commit()
@@ -88,7 +94,7 @@ class TestPlayer(unittest.TestCase):
         assert json_object is not None
         assert json_object["name"] == "Testaaja", json_object["name"]
 
-    def test_put_player_valid_rename(self):
+    def testPutPlayerValidRename(self):
         player = Player(name="Testaaja")
         db.session.add(player)
         db.session.commit()
@@ -102,9 +108,9 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 201, response.status_code
 
-    def test_put_player_existing_name(self):
-        self.post_valid_player("Player A")
-        self.post_valid_player("Player B")
+    def testPutPlayerExistingName(self):
+        self.postValidPlayer("Player A")
+        self.postValidPlayer("Player B")
 
         edit_url = ITEM_URL.replace('<player_name>', 'Player A')
         response = self.client.put(
@@ -114,8 +120,8 @@ class TestPlayer(unittest.TestCase):
         )
         assert response.status_code == 409, response.status_code
 
-    def test_put_player_invalid_schema(self):
-        self.post_valid_player("Testaaja")
+    def testPutPlayerInvalidSchema(self):
+        self.postValidPlayer("Testaaja")
 
         edit_url = ITEM_URL.replace('<player_name>', 'Testaaja')
         response = self.client.put(
@@ -125,7 +131,7 @@ class TestPlayer(unittest.TestCase):
         )
         assert response.status_code == 400, response.status_code
 
-    def test_put_player_invalid_datatype(self):
+    def testPutPlayerInvalidDatatype(self):
         response = self.client.post(
             COLLECTION_URL,
             data='notavalidjson',
@@ -134,7 +140,7 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 415, response.status_code
 
-    def post_valid_player(self, name):
+    def postValidPlayer(self, name):
         return self.client.post(
             COLLECTION_URL,
             data=json.dumps({"name": name}),
