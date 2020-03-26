@@ -6,6 +6,8 @@ from src.utils import create_error_response
 from src.orm_models import Game, GameType, Player, Tournament
 from src.extensions import db
 import json
+import secrets
+import string
 from jsonschema import validate, ValidationError
 import datetime
 
@@ -15,10 +17,94 @@ PROFILE_URL = "/profiles/game/"
 
 class GameCollection(Resource):
     def get(self):
-        pass #TODO
+        items = []
+        games = Game.query.all()
+        if games is None:
+            return Response(status=204)
+        for db_game in games:
+            name = db_game.accessname
+            status = db_game.status
+            body = GameBuilder(
+                name = name,
+                status = status
+            )
+            gametype = db_game.game_type
+            if gametype is not None:
+                body["game_type"] = gametype.name
+            host = db_game.host
+            if host is not None:
+                body["host"] = host.name
+            tournament = db_game.tournament
+            if tournament is not None:
+                body["tournament"] = tournament.name
+            body["created"] = str(db_game.created_at)
+            finished = db_game.finished_at
+            if finished is not None:
+                body["finished"] = str(finished)
+
+            #Controls for an item
+            body.add_control("self", url_for("gameresource", game_name=name))
+            body.add_control("profile", PROFILE_URL)
+            items.append(body)
+
+        body = GameBuilder()
+        #Controls for collection
+        body.add_namespace("gamescr", NAMESPACE_URL)
+        body.add_control("self", url_for("gamecollection"))
+        body.add_control_all_gametypes()
+        body.add_control_all_tournaments()
+        body.add_control_all_players()
+        body.add_control_add_game()
+        body["items"] = items
+
+        return Response(json.dumps(body), 200, mimetype=MASON)
 
     def post(self):
-        pass #TODO
+        if not request.json:
+            return create_error_response(415, "Unsupported Media Type", "use JSON")
+        try: 
+            validate(request.json, GameBuilder.gameSchema())
+        except ValidationError as e:
+            return create_error_response(400, "Invalid JSON document", str(e))
+
+        game = Game(
+            accessname = request.json["name"],
+        )
+        db_gametype = GameType.query.filter_by(name=request.json["game_type"]).first()
+        if db_gametype is None:
+            return create_error_response(409, "Gametype not found", 
+                "Gametype with this name doesn't exist " + str(request.json["game_type"]))
+        game.game_type_id = db_gametype.id
+        db_host = Player.query.filter_by(name=request.json["host"]).first()
+        if db_host is None:
+            return create_error_response(409, "Host not found", 
+                "Player with this name doesn't exist " + str(request.json["host"]))
+        game.host_id = db_host.id
+        if "status" in request.json:
+            game.status = request.json["status"]
+        if "tournament" in request.json:
+            db_tournament = Tournament.query.filter_by(name=request.json["tournament"]).first()
+            if db_tournament is None:
+                return create_error_response(409, "Tournament not found", 
+                "Tournament with this name doesn't exist " + str(request.json["tournament"]))
+            game.tournament_id = db_tournament.id
+        
+        #Should be cryptographically secure https://docs.python.org/3/library/secrets.html
+        #Length could be longer, currently not used for anything
+        game.game_token = secrets.token_urlsafe(10)
+
+        try: 
+            db.session.add(game)
+            db.session.commit()
+        except IntegrityError:
+            return create_error_response(409, "Already exists", 
+                "Game with this name already exists " + str(request.json["name"]))
+
+        return Response(status=201, headers={
+            "Location": url_for("gameresource", game_name=request.json["name"])
+            })
+
+        
 
 class GameResource(Resource):
 
