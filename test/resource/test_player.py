@@ -137,13 +137,16 @@ class TestPlayer(unittest.TestCase):
         assert Player.query.count() == 1
 
     def testPutPlayerInvalidDatatype(self):
+        self.postValidPlayer("Testaaja")
+
+        edit_url = ITEM_URL.replace('<player_name>', 'Testaaja')
         response = self.client.put(
-            COLLECTION_URL,
+            edit_url,
             data='notavalidjson',
             content_type='application/json'
         )
 
-        assert response.status_code == 415, response.status_code
+        assert response.status_code == 400, response.status_code
 
     def postValidPlayer(self, name):
         return self.client.post(
