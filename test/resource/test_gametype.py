@@ -24,13 +24,13 @@ class TestPlayer(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def test_get_non_existing_gametype(self):
+    def testGetNonExistingGametype(self):
         url = ITEM_URL.replace("<gametype_name>", "Bridge")
         response = self.client.get(url)
 
         assert response.status_code == 404, response.status_code
 
-    def test_get_gametype(self):
+    def testGetGametype(self):
         db.session.add(GameType(name="Chess"))
         db.session.commit
 
@@ -39,17 +39,17 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 200, response.status_code
 
-    def test_post_gametype(self):
+    def testPostGametype(self):
         test_cases = [
             {
-                'min_players': 3,
-                'max_players': 7
+                "min_players": 3,
+                "max_players": 7
             },
             {
-                'min_players': 2
+                "min_players": 2
             },
             {
-                'max_players': 6
+                "max_players": 6
             },
         ]
 
@@ -59,33 +59,73 @@ class TestPlayer(unittest.TestCase):
         response = self.client.post(COLLECTION_URL, data=json.dumps(test_case))
 
         assert response.status_code == 201, response.status_code
+        assert GameType.query.count() == 1
     
-    def test_post_gametype_invalid_schema(self):
-        response = self.client.post(COLLECTION_URL, data=dict(
-            shoe_size=10
-        ), content_type='application/json')
+    def testPostGametypeInvalidSchema(self):
+        response = self.client.post(
+            COLLECTION_URL,
+            data={"shoe_size": 10},
+            content_type="application/json"
+        )
 
         assert response.status_code == 400, response.status_code
+        assert GameType.query.count() == 0
 
-    def test_post_gametype_invalid_content(self):
+    def testPostGametypeInvalidContent(self):
         response = self.client.post(COLLECTION_URL, data="asdasd")
 
         assert response.status_code == 415, response.status_code
+        assert GameType.query.count() == 0
 
-    def test_post_gametype_missing_contenttype(self):
-        gametype = dict(name="Chess")
+    def testPostGametypeMissingContenttype(self):
         response = self.client.post(
             COLLECTION_URL,
-            data=gametype
+            data=json.dumps({"name": "Chess"})
         )
         assert response.status_code == 415, response.status_code
+        assert GameType.query.count() == 0
 
-    def test_post_gametype_duplicate(self):
+    def testPostGametypeDuplicate(self):
         db.session.add(GameType(name="Chess"))
         db.session.commit()
 
-        response = self.client.post(COLLECTION_URL, data=json.dumps(dict(
-            name="Chess"
-        )), content_type='application/json')
+        response = self.client.post(
+            COLLECTION_URL,
+            data=json.dumps({"name": "Chess"}),
+            content_type="application/json"
+        )
 
         assert response.status_code == 409, response.status_code
+        assert GameType.query.count() == 1
+
+    def testPutGametype(self):
+        db.session.add(GameType(name="Chess", max_players=2))
+        db.session.commit()
+
+        response = self.client.put(
+            ITEM_URL.replace("<gametype_name>", "Chess"),
+            data=json.dumps({"name": "Chess", "max_players": 3}),
+            content_type="application/json"
+        )
+
+        assert response.status_code == 201, response.status_code
+
+        game_type = GameType.query.filter_by(name="Chess").first()
+        assert game_type.max_players == 3
+
+    def testDeleteGametype(self):
+        db.session.add(GameType(name="Chess"))
+        db.session.commit
+
+        url = ITEM_URL.replace("<gametype_name>", "Chess")
+        response = self.client.delete(url)
+
+        assert response.status_code == 204, response.status_code
+        assert GameType.query.count() == 1
+
+    def testDeleteNonExistingGametype(self):
+        url = ITEM_URL.replace("<gametype_name>", "imaginary type")
+        response = self.client.delete(url)
+
+        assert response.status_code == 404, response.status_code
+        assert GameType.query.count() == 1

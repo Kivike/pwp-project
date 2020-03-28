@@ -24,7 +24,7 @@ class TestPlayer(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def test_get_non_existing_game_scoreboard(self):
+    def testGetNonExistingGameScoreboard(self):
         url = SCOREBOARD_URL.replace('<game_token>', 'doesnotexist123')
         response = self.client.get(url)
         
