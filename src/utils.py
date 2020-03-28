@@ -272,7 +272,7 @@ class ScoreBuilder(MasonBuilder):
         }
         props["score"] = {
             "description": "Score of the player",
-            "type": "float"
+            "type": "number"
         }
         return schema
 
