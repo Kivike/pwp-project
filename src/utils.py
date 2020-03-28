@@ -272,7 +272,7 @@ class ScoreBuilder(MasonBuilder):
         }
         props["score"] = {
             "description": "Score of the player",
-            "type": "float"
+            "type": "number"
         }
         return schema
 
@@ -288,7 +288,7 @@ class ScoreBuilder(MasonBuilder):
         self.add_control(ctrl_name="edit", href=url_for("playerscoreresource", game_name=game_name, 
             player_name=player_name), method="PUT", encoding="json", schema=schema, title="Edit player's score")
 
-    def add_control_delete_gametype(self, game_name, player_name):
+    def add_control_delete_playerscore(self, game_name, player_name):
         self.add_control(ctrl_name="gamescr:delete", href=url_for("playerscoreresource", game_name=game_name, 
             player_name=player_name), method="DELETE", title="Delete this player from this game")
 
