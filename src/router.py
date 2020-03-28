@@ -14,7 +14,7 @@ def route_app(app):
     def index():
         return "Index"
 
-    api.add_resource(GameResource, "/api/games/<game_token>/")
+    api.add_resource(GameResource, "/api/games/<game_name>/")
     api.add_resource(GameCollection, "/api/games/")
 
     api.add_resource(GametypeResource, "/api/gametypes/<gametype_name>/")
@@ -34,8 +34,8 @@ def route_app(app):
     api.add_resource(PlayerResource, "/api/players/<player_name>/")
     api.add_resource(PlayerCollection, "/api/players/")
 
-    api.add_resource(GameScoreboard, "/api/games/<game_token>/scoreboard/")
-    api.add_resource(PlayerScoreResource, "/api/games/<game_token>/scoreboard/<player_name>/")
+    api.add_resource(GameScoreboard, "/api/games/<game_name>/scoreboard/")
+    api.add_resource(PlayerScoreResource, "/api/games/<game_name>/scoreboard/<player_name>/")
 
     api.add_resource(TournamentResource, "/api/tournaments/<tournament_token>/")
     api.add_resource(TournamentCollection, "/api/tournaments/")

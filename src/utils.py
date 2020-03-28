@@ -118,7 +118,7 @@ class GameBuilder(MasonBuilder):
     def gameSchema():
         schema = {
             "type": "object",
-            "required": ["name", "game_type", "host"]
+            "required": ["game_type", "host"]
         }
         props = schema["properties"] = {}
         props["name"] = {
@@ -186,7 +186,7 @@ class GameBuilder(MasonBuilder):
             title="Gametype of this game")
 
     def add_control_scores(self, name):
-        self.add_control(ctrl_name="gamescr:scores", href=url_for("gamescoreboard", game_token=name), 
+        self.add_control(ctrl_name="gamescr:scores", href=url_for("gamescoreboard", game_name=name), 
             title="Scores of players in this game")
 
     def add_control_tournament(self, name):
@@ -195,16 +195,16 @@ class GameBuilder(MasonBuilder):
 
     def add_control_add_score(self, name):
         schema = self.scoreSchema()
-        self.add_control(ctrl_name="gamescr:add-score", href=url_for("gamescoreboard", game_token=name), 
+        self.add_control(ctrl_name="gamescr:add-score", href=url_for("gamescoreboard", game_name=name), 
             method="POST", encoding="json", schema=schema, title="Add a new player to the game")
 
     def add_control_edit_game(self, name):
         schema = self.gameSchema()
-        self.add_control(ctrl_name="edit", href=url_for("gameresource", game_token=name), method="PUT", 
+        self.add_control(ctrl_name="edit", href=url_for("gameresource", game_name=name), method="PUT", 
             encoding="json", schema=schema, title="Edit this game")
 
     def add_control_delete_game(self, name):
-        self.add_control(ctrl_name="gamescr:delete", href=url_for("gameresource", game_token=name), 
+        self.add_control(ctrl_name="gamescr:delete", href=url_for("gameresource", game_name=name), 
             method="DELETE", title="Delete this game")
 
 class GametypeBuilder(MasonBuilder):
@@ -280,16 +280,16 @@ class ScoreBuilder(MasonBuilder):
 
     def add_control_add_score(self, name):
         schema = self.scoreSchema()
-        self.add_control(ctrl_name="gamescr:add-score", href=url_for("gamescoreboard", game_token=name), 
+        self.add_control(ctrl_name="gamescr:add-score", href=url_for("gamescoreboard", game_name=name), 
             method="POST", encoding="json", schema=schema, title="Add a new player to the game")
 
-    def add_control_edit_playerscore(self, game_token, player_name):
+    def add_control_edit_playerscore(self, game_name, player_name):
         schema = self.scoreSchema()
-        self.add_control(ctrl_name="edit", href=url_for("playerscoreresource", game_token=game_token, 
+        self.add_control(ctrl_name="edit", href=url_for("playerscoreresource", game_name=game_name, 
             player_name=player_name), method="PUT", encoding="json", schema=schema, title="Edit player's score")
 
-    def add_control_delete_gametype(self, game_token, player_name):
-        self.add_control(ctrl_name="gamescr:delete", href=url_for("playerscoreresource", game_token=game_token, 
+    def add_control_delete_gametype(self, game_name, player_name):
+        self.add_control(ctrl_name="gamescr:delete", href=url_for("playerscoreresource", game_name=game_name, 
             player_name=player_name), method="DELETE", title="Delete this player from this game")
 
     def add_control_player(self, player_name):

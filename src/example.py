@@ -32,7 +32,7 @@ def first_example():
     tournament = Tournament(name="Chess Tournament 1", status=1, created_at=func.now())
 
     #Initialize a game and add the players (created_at defaults to func.now() but is here as an example)
-    chess_game = Game(accessname="testgame1" ,status=1, game_type=game_type, host=player_1, tournament=tournament, game_token="chess_token", created_at=func.now())
+    chess_game = Game(game_token="testgame1" ,status=1, game_type=game_type, host=player_1, tournament=tournament, created_at=func.now())
 
     #Initial player scores, the points are optional
     player_1_score = PlayerScore(player=player_1, game=chess_game)
@@ -75,7 +75,7 @@ def second_example():
     #No tournament this time as it is optional
 
     #Initialize a game and add the players, in this example game has already ended
-    hearts_game = Game(accessname="gameofhearts", status=0, game_type=game_type, host=player_1, game_token="hearts_token", created_at=datetime.datetime.now()-datetime.timedelta(days=5), finished_at=datetime.datetime.now()-datetime.timedelta(days=2))
+    hearts_game = Game(game_token="gameofhearts", status=0, game_type=game_type, host=player_1, created_at=datetime.datetime.now()-datetime.timedelta(days=5), finished_at=datetime.datetime.now()-datetime.timedelta(days=2))
 
     #Player scores, this time they have scores
     player_1_score = PlayerScore(player=player_1, score=22, game=hearts_game)
