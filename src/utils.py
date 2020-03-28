@@ -118,7 +118,7 @@ class GameBuilder(MasonBuilder):
     def gameSchema():
         schema = {
             "type": "object",
-            "required": ["name", "game_type", "host"]
+            "required": ["game_type", "host"]
         }
         props = schema["properties"] = {}
         props["name"] = {

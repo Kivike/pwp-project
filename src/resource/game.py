@@ -6,7 +6,7 @@ from src.utils import create_error_response
 from src.orm_models import Game, GameType, Player, Tournament
 from src.extensions import db
 import json
-import secrets
+import random
 import string
 from jsonschema import validate, ValidationError
 import datetime
@@ -22,7 +22,7 @@ class GameCollection(Resource):
         if games is None:
             return Response(status=204)
         for db_game in games:
-            name = db_game.accessname
+            name = db_game.game_token
             status = db_game.status
             body = GameBuilder(
                 name = name,
@@ -67,14 +67,11 @@ class GameCollection(Resource):
         except ValidationError as e:
             return create_error_response(400, "Invalid JSON document", str(e))
 
-        game = Game(
-            accessname = request.json["name"],
-        )
         db_gametype = GameType.query.filter_by(name=request.json["game_type"]).first()
         if db_gametype is None:
             return create_error_response(409, "Gametype not found", 
                 "Gametype with this name doesn't exist " + str(request.json["game_type"]))
-        game.game_type_id = db_gametype.id
+        game = Game(game_type_id = db_gametype.id)
         db_host = Player.query.filter_by(name=request.json["host"]).first()
         if db_host is None:
             return create_error_response(409, "Host not found", 
@@ -91,17 +88,27 @@ class GameCollection(Resource):
         
         #Should be cryptographically secure https://docs.python.org/3/library/secrets.html
         #Length could be longer, currently not used for anything
-        game.game_token = secrets.token_urlsafe(10)
+        if "name" in request.json:
+            game.game_token = request.json["name"]
+            try: 
+                db.session.add(game)
+                db.session.commit()
+            except IntegrityError:
+                return create_error_response(409, "Already exists", 
+                    "Game with this name already exists " + str(request.json["name"]))
+        else:
+            while True:
+                game.game_token = request.json["game_type"] + ''.join(random.choices(string.digits, k = 5))
+                try: 
+                    db.session.add(game)
+                    db.session.commit()
+                    break
+                except IntegrityError:
+                    continue
 
-        try: 
-            db.session.add(game)
-            db.session.commit()
-        except IntegrityError:
-            return create_error_response(409, "Already exists", 
-                "Game with this name already exists " + str(request.json["name"]))
 
         return Response(status=201, headers={
-            "Location": url_for("gameresource", game_name=request.json["name"])
+            "Location": url_for("gameresource", game_name=game.game_token)
             })
 
         
@@ -111,12 +118,12 @@ class GameResource(Resource):
     #Get a game 
     def get(self, game_name):
         #Check whether game exists
-        db_game = Game.query.filter_by(accessname=game_name).first()
+        db_game = Game.query.filter_by(game_token=game_name).first()
         if db_game is None:
             return create_error_response(404, "Game not found")
         
         body = GameBuilder(
-            name = db_game.accessname,
+            name = db_game.game_token,
             status = db_game.status,
             created = str(db_game.created_at)
         )
@@ -154,22 +161,22 @@ class GameResource(Resource):
     def put(self, game_name):
         if not request.json:
             return create_error_response(415, "Unsupported Media Type", "use JSON")
-        db_game = Game.query.filter_by(accessname=game_name).first()
+        db_game = Game.query.filter_by(game_token=game_name).first()
         if db_game is None:
             return create_error_response(404, "Game not found")
         try: 
             validate(request.json, GameBuilder.gameSchema())
         except ValidationError as e:
             return create_error_response(400, "Invalid JSON document", str(e))
-        
-        new_name = request.json["name"]
-         #If the new name already in use, return 409
-        if new_name != game_name:
-            db_game_new_name = Game.query.filter_by(accessname=new_name).first()
-            if db_game_new_name is not None:
-                return create_error_response(409, "Alredy exists", "Game already exists with name "
-                    + str(new_name))
-        db_game.accessname = new_name
+        if "name" in request.json:
+            new_name = request.json["name"]
+            #If the new name already in use, return 409
+            if new_name != game_name:
+                db_game_new_name = Game.query.filter_by(game_token=new_name).first()
+                if db_game_new_name is not None:
+                    return create_error_response(409, "Alredy exists", "Game already exists with name "
+                        + str(new_name))
+            db_game.game_token = new_name
 
         #if status changes from 1 to 0 (game ends) or 0 to 1 (game is active again), log the time the game ends/
         #remove it
@@ -223,7 +230,7 @@ class GameResource(Resource):
 
         #Return the location in the header in case the name changes
         return Response(status=201, headers={
-            "Location": url_for("gameresource", game_name=new_name)
+            "Location": url_for("gameresource", game_name=db_game.game_token)
         })
 
 
@@ -231,7 +238,7 @@ class GameResource(Resource):
         
     #Delete a game
     def delete(self, game_name):
-        db_game = Game.query.filter_by(accessname=game_name).first()
+        db_game = Game.query.filter_by(game_token=game_name).first()
         if db_game is None:
             return create_error_response(404, "Game not found")
         db.session.delete(db_game)
