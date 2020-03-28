@@ -81,7 +81,7 @@ class TestPlayer(unittest.TestCase):
             content_type='application/json'
         )
         assert response.status_code == 400, response.status_code
-        assert GameType.query.count() == 0
+        assert Game.query.count() == 0
 
     def testPostGameWithoutType(self):
         host = Player(name="Alice")
@@ -97,7 +97,7 @@ class TestPlayer(unittest.TestCase):
             content_type='application/json'
         )
         assert response.status_code == 400, response.status_code
-        assert GameType.query.count() == 0
+        assert Game.query.count() == 0
 
     def testPostGameInvalidContent(self):
         response = self.client.post(
@@ -105,8 +105,8 @@ class TestPlayer(unittest.TestCase):
             data="notavalidjson",
             content_type='application/json'
         )
-        assert response.status_code == 415, response.status_code
-        assert GameType.query.count() == 0
+        assert response.status_code == 400, response.status_code
+        assert Game.query.count() == 0
 
     def testPostGameInvalidContentType(self):
         host = Player(name="Alice")
@@ -125,7 +125,7 @@ class TestPlayer(unittest.TestCase):
             data=json.dumps(game_data)
         )
         assert response.status_code == 415, response.status_code
-        assert GameType.query.count() == 0
+        assert Game.query.count() == 0
     
     def testDeleteGame(self):
         host = Player(name="Alice")
@@ -142,10 +142,10 @@ class TestPlayer(unittest.TestCase):
         response = self.client.delete(url)
 
         assert response.status_code == 204, response.status_code
-        assert GameType.query.count() == 0
+        assert Game.query.count() == 0
 
     def testDeleteNonExistingGame(self):
         url = ITEM_URL.replace("<game_token>", "doesnotexist")
         response = self.client.delete(url)
 
-        assert response.status == 404, response.status_code
+        assert response.status_code == 404, response.status_code
