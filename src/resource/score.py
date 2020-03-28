@@ -74,7 +74,7 @@ class GameScoreboard(Resource):
         prevscores = PlayerScore.query.filter_by(game_id=db_game.id).filter_by(player_id=db_player.id).first()
         if prevscores is not None:
             return create_error_response(409, "Already exists", 
-                    "Playerscore for this player already exists in game " + str(request.json["player"]))
+                    "Playerscore for this player already exists in game " + game_name)
 
         db.session.add(score)
         db.session.commit()
