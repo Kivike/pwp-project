@@ -259,15 +259,11 @@ class ScoreBuilder(MasonBuilder):
     def scoreSchema():
         schema = {
             "type": "object",
-            "required": ["player", "game", "score"]
+            "required": ["player", "score"]
         }
         props = schema["properties"] = {}
         props["player"] = {
             "description": "Name of the player",
-            "type": "string"
-        }
-        props["game"] = {
-            "description": "Access name of the game",
             "type": "string"
         }
         props["score"] = {

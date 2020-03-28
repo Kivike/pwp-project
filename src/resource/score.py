@@ -62,7 +62,7 @@ class GameScoreboard(Resource):
         db_game = Game.query.filter_by(game_token=game_name).first()
         if db_game is None:
             return create_error_response(409, "Game not found", 
-                "Game with this name doesn't exist " + str(request.json["game"]))
+                "Game with this name doesn't exist " + str(game_name))
         score.game_id = db_game.id
         db_player = Player.query.filter_by(name=request.json["player"]).first()
         if db_player is None:
@@ -80,7 +80,7 @@ class GameScoreboard(Resource):
         db.session.commit()
 
         return Response(status=201, headers={
-            "Location": url_for("playerscoreresource", game_name=db_game.game_token, player_name=db_player.name)
+            "Location": url_for("playerscoreresource", game_name=game_name, player_name=db_player.name)
             })
         
 
