@@ -86,8 +86,7 @@ class GameCollection(Resource):
                 "Tournament with this name doesn't exist " + str(request.json["tournament"]))
             game.tournament_id = db_tournament.id
         
-        #Should be cryptographically secure https://docs.python.org/3/library/secrets.html
-        #Length could be longer, currently not used for anything
+        #Name is either decided by the user or generated from gametype
         if "name" in request.json:
             game.game_token = request.json["name"]
             try: 
