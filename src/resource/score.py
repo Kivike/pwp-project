@@ -117,7 +117,7 @@ class PlayerScoreResource(Resource):
 
     #Edit a player score resource
     def put(self, game_name, player_name):
-        urlChanged = False
+        url_changed = False
 
         if not request.json:
             return create_error_response(415, "Unsupported Media Type", "use JSON")
@@ -150,7 +150,7 @@ class PlayerScoreResource(Resource):
                     return create_error_response(409, "Player score already exists", "Player score already "
                        + "exists with name " + str(new_player))
                 db_player_score.player = db_new_player
-                urlChanged = True
+                url_changed = True
         
 
         #When score changes
@@ -161,7 +161,7 @@ class PlayerScoreResource(Resource):
         db.session.commit()
 
         #If url changed
-        if urlChanged:
+        if url_changed:
             return Response(status=201, headers={
             "Location": url_for("playerscoreresource", player_name=db_player_score.player.name,
                 game_name=db_player_score.game.game_token)
