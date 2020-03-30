@@ -96,9 +96,13 @@ class GameCollection(Resource):
                 return create_error_response(409, "Already exists", 
                     "Game with this name already exists " + str(request.json["name"]))
         else:
+            limiter = 0
             while True:
-                game.game_token = request.json["game_type"] + ''.join(random.choices(string.digits, k = 5))
+                if limiter > 10:
+                    return Response(status=507, response="Unexpected error, please name game manually")
+                game.game_token = request.json["game_type"] + ''.join(random.choices(string.ascii_lowercase+string.digits, k = 6))
                 try: 
+                    limiter += 1
                     db.session.add(game)
                     db.session.commit()
                     break
