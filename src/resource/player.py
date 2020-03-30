@@ -56,6 +56,7 @@ class PlayerCollection(Resource):
             db.session.add(player)
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return create_error_response(409, "Already exists", "Player already exists with name " + str(request.json["name"]))
 
         return Response(status=201, headers={

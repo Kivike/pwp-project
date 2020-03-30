@@ -6,8 +6,9 @@ from src.app import create_app, db
 from src.orm_models import GameType
 
 import json
+import random
 
-ITEM_URL = "/api/gametype/<gametype_name>/"
+ITEM_URL = "/api/gametypes/<gametype_name>/"
 COLLECTION_URL = "/api/gametypes/"
 
 class TestPlayer(unittest.TestCase):
@@ -42,24 +43,27 @@ class TestPlayer(unittest.TestCase):
     def testPostGametype(self):
         test_cases = [
             {
+                "name": "Bridge1",
                 "min_players": 3,
                 "max_players": 7
             },
             {
+                "name": "Bridge2",
                 "min_players": 2
             },
             {
+                "name": "Bridge3",
                 "max_players": 6
-            },
+            }
         ]
 
+        expected_count = 0
+
         for test_case in test_cases:
-            test_case["name"]  = "Bridge"
-
-        response = self.client.post(COLLECTION_URL, data=json.dumps(test_case))
-
-        assert response.status_code == 201, response.status_code
-        assert GameType.query.count() == 1
+            response = self.client.post(COLLECTION_URL, data=json.dumps(test_case), content_type="application/json")
+            expected_count += 1
+            assert response.status_code == 201, response.status_code
+            assert GameType.query.count() == expected_count
     
     def testPostGametypeInvalidSchema(self):
         response = self.client.post(
@@ -115,15 +119,18 @@ class TestPlayer(unittest.TestCase):
 
     def testDeleteGametype(self):
         db.session.add(GameType(name="Chess"))
-        db.session.commit
+        db.session.commit()
 
         url = ITEM_URL.replace("<gametype_name>", "Chess")
         response = self.client.delete(url)
 
         assert response.status_code == 204, response.status_code
-        assert GameType.query.count() == 1
+        assert GameType.query.count() == 0
 
     def testDeleteNonExistingGametype(self):
+        db.session.add(GameType(name="Chess"))
+        db.session.commit()
+        
         url = ITEM_URL.replace("<gametype_name>", "imaginary type")
         response = self.client.delete(url)
 
