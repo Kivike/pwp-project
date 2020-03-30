@@ -57,10 +57,10 @@ class TestPlayer(unittest.TestCase):
         for test_case in test_cases:
             test_case["name"]  = "Bridge"
 
-        response = self.client.post(COLLECTION_URL, data=json.dumps(random.choice(test_cases)), content_type="application/json")
+            response = self.client.post(COLLECTION_URL, data=json.dumps(test_case), content_type="application/json")
 
-        assert response.status_code == 201, response.status_code
-        assert GameType.query.count() == 1
+            assert response.status_code == 201, response.status_code
+            assert GameType.query.count() == 1
     
     def testPostGametypeInvalidSchema(self):
         response = self.client.post(
