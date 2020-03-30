@@ -66,6 +66,7 @@ class GametypeCollection(Resource):
             db.session.add(gametype)
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             return create_error_response(409, "Already exists", 
                 "Gametype with this name already exists " + str(request.json["name"]))
 

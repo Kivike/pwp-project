@@ -61,12 +61,12 @@ class GameScoreboard(Resource):
         score = PlayerScore(score = request.json["score"])
         db_game = Game.query.filter_by(game_token=game_name).first()
         if db_game is None:
-            return create_error_response(409, "Game not found", 
+            return create_error_response(404, "Game not found", 
                 "Game with this name doesn't exist " + str(game_name))
         score.game_id = db_game.id
         db_player = Player.query.filter_by(name=request.json["player"]).first()
         if db_player is None:
-            return create_error_response(409, "Player not found", 
+            return create_error_response(404, "Player not found", 
                 "Player with this name doesn't exist " + str(request.json["player"]))
         score.player_id = db_player.id
 

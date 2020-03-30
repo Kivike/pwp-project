@@ -44,8 +44,8 @@ class TestScore(unittest.TestCase):
         
         assert response.status_code == 200
 
-        data = json.load(response.data)
-        assert len(data.items) == 0
+        data = json.loads(response.data.decode("utf-8"))
+        assert len(data["items"]) == 0
 
     def testGetScoreboard(self):
         game_type = GameType(name="Uno")
@@ -68,8 +68,8 @@ class TestScore(unittest.TestCase):
         
         assert response.status_code == 200
 
-        data = json.load(response.data)
-        assert len(data.items) == 2
+        data = json.loads(response.data.decode("utf-8"))
+        assert len(data["items"]) == 2
 
     def testPostScore(self):
         game = Game(game_token="test12345")
@@ -79,10 +79,11 @@ class TestScore(unittest.TestCase):
         db.session.add(player)
         db.session.commit()
 
-        url = SCORE_URL.replace("<game_token>", "test12345")
+        url = SCOREBOARD_URL.replace("<game_token>", "test12345")
 
         post_data = {
-            "player": "Jamppa"
+            "player": "Jamppa",
+            "score": 5
         }
 
         response = self.client.post(
@@ -92,7 +93,7 @@ class TestScore(unittest.TestCase):
         )
 
         assert response.status_code == 201, response.status_code
-        assert PlayerScore.query.filter_by(name="Jamppa").count() == 1
+        assert PlayerScore.query.filter_by(player_id=1).count() == 1
 
     def testPostScoreWithoutPlayer(self):
         game_type = GameType(name="Uno")
@@ -101,9 +102,9 @@ class TestScore(unittest.TestCase):
         db.session.add(game)
         db.session.commit()
 
-        url = SCORE_URL.replace("<game_token>", "test12345")
+        url = SCOREBOARD_URL.replace("<game_token>", "test12345")
 
-        post_data = {}
+        post_data = {"foo": 1}
 
         response = self.client.post(
             url,
@@ -119,10 +120,11 @@ class TestScore(unittest.TestCase):
         db.session.add(player)
         db.session.commit()
 
-        url = SCORE_URL.replace("<game_token>", "nonexisting")
+        url = SCOREBOARD_URL.replace("<game_token>", "nonexisting")
 
         post_data = {
-            "player": "Jamppa"
+            "player": "Jamppa",
+            "score": 5
         }
 
         response = self.client.post(
@@ -139,20 +141,27 @@ class TestScore(unittest.TestCase):
         player = Player(name="Jamppa")
         score = PlayerScore(game=game, player=player)
 
+        db.session.add(game_type)
+        db.session.add(game)
+        db.session.add(player)
+        db.session.add(score)
+        db.session.commit()
+
         put_data = {
+            "player": "Jamppa",
             "score": 50
         }
 
         url = SCORE_URL.replace("<game_token>", "test12345")
         url = url.replace("<player_name>", "Jamppa")
 
-        response = self.client.post(
+        response = self.client.put(
             url,
             data=json.dumps(put_data),
             content_type="application/json"
         )
 
-        assert response.status_code == 201, response.status_code
+        assert response.status_code == 204, response.status_code
 
         db_score = PlayerScore.query.filter_by(player_id=player.id).first()
         assert db_score.score == 50, db_score.score

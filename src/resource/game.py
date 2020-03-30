@@ -93,6 +93,7 @@ class GameCollection(Resource):
                 db.session.add(game)
                 db.session.commit()
             except IntegrityError:
+                db.session.rollback()
                 return create_error_response(409, "Already exists", 
                     "Game with this name already exists " + str(request.json["name"]))
         else:
