@@ -10,6 +10,7 @@ import json
 SCORE_URL = "/api/games/<game_token>/scoreboard/<player_name>/"
 SCOREBOARD_URL = "/api/games/<game_token>/scoreboard/"
 GAME_URL = "/api/games/<game_token>/"
+PLAYER_URL = "/api/players/<player_name>/"
 
 class TestScore(unittest.TestCase):
 
@@ -172,10 +173,11 @@ class TestScore(unittest.TestCase):
         db.session.commit()
 
         put_data = {
+            "player": "Jamppa",
             "score": 50
         }
         url = SCORE_URL.replace("<game_token>", "10dchess123")
-        url = SCORE_URL.replace("<player_name>", "Jamppa")
+        url = url.replace("<player_name>", "Jamppa")
 
         response = self.client.put(
             url,
@@ -184,6 +186,37 @@ class TestScore(unittest.TestCase):
         )
 
         assert response.status_code == 404, response.status_code
+
+    def testPutScoreDuplicate(self):
+        game_type = GameType(name="Uno")
+        game = Game(game_token="test12345", game_type=game_type)
+        player_a = Player(name="Player A")
+        player_b = Player(name="Player B")
+        score_a = PlayerScore(game=game, player=player_a)
+        score_b = PlayerScore(game=game, player=player_b)
+
+        db.session.add(game_type)
+        db.session.add(game)
+        db.session.add(player_a)
+        db.session.add(player_b)
+        db.session.add(score_a)
+        db.session.add(score_b)
+        db.session.commit()
+
+        put_data = {
+            "player": "Player B",
+            "score": 100,
+            "game": "test12345"
+        }
+        url = SCORE_URL.replace("<game_token>", "test12345")
+        url = url.replace("<player_name>", "Player A")
+
+        response = self.client.put(
+            url,
+            data=json.dumps(put_data),
+            content_type="application/json"
+        )
+        assert response.status_code == 409, response.status_code
 
     def testDeletePlayerScore(self):
         game_type = GameType(name="Uno")
@@ -248,4 +281,21 @@ class TestScore(unittest.TestCase):
         response = self.client.delete(url)
         
         assert response.status_code == 204
-        assert PlayerScore.query.count() == 0
+        assert PlayerScore.query.count() == 0, PlayerScore.query.count()
+
+    def testDeleteScorePlayer(self):
+        game_type = GameType(name="Uno")
+        game = Game(game_token="test12345", game_type=game_type)
+        player = Player(name="Testman")
+        score = PlayerScore(player=player, game=game)
+
+        db.session.add(game_type)
+        db.session.add(game)
+        db.session.add(player)
+        db.session.add(score)
+
+        player_url = PLAYER_URL.replace("<player_name>", "Testman")
+        self.client.delete(player_url)
+
+        assert PlayerScore.query.count() == 0, PlayerScore.query.count()
+

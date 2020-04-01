@@ -63,7 +63,7 @@ class TestPlayer(unittest.TestCase):
             response = self.client.post(COLLECTION_URL, data=json.dumps(test_case), content_type="application/json")
             expected_count += 1
             assert response.status_code == 201, response.status_code
-            assert GameType.query.count() == expected_count
+            assert GameType.query.count() == expected_count, GameType.query.count()
     
     def testPostGametypeInvalidSchema(self):
         response = self.client.post(
@@ -73,13 +73,29 @@ class TestPlayer(unittest.TestCase):
         )
 
         assert response.status_code == 400, response.status_code
-        assert GameType.query.count() == 0
+        assert GameType.query.count() == 0, GameType.query.count()
 
     def testPostGametypeInvalidContent(self):
         response = self.client.post(COLLECTION_URL, data="asdasd")
 
         assert response.status_code == 415, response.status_code
-        assert GameType.query.count() == 0
+        assert GameType.query.count() == 0, GameType.query.count()
+
+    def testPostGametypeDuplicate(self):
+        db.session.add(GameType(name="Chess"))
+        db.session.commit()
+
+        post_data = {
+            "name": "Chess"
+        }
+        response = self.client.post(
+            COLLECTION_URL,
+            data=json.dumps(post_data),
+            content_type="application/json"
+        )
+
+        assert response.status_code == 409, response.status_code
+        assert GameType.query.count() == 1, GameType.query.count()
 
     def testPostGametypeMissingContenttype(self):
         response = self.client.post(
@@ -87,7 +103,7 @@ class TestPlayer(unittest.TestCase):
             data=json.dumps({"name": "Chess"})
         )
         assert response.status_code == 415, response.status_code
-        assert GameType.query.count() == 0
+        assert GameType.query.count() == 0, GameType.query.count()
 
     def testPostGametypeDuplicate(self):
         db.session.add(GameType(name="Chess"))
@@ -100,7 +116,7 @@ class TestPlayer(unittest.TestCase):
         )
 
         assert response.status_code == 409, response.status_code
-        assert GameType.query.count() == 1
+        assert GameType.query.count() == 1, GameType.query.count()
 
     def testPutGametype(self):
         db.session.add(GameType(name="Chess", max_players=2))
@@ -117,6 +133,23 @@ class TestPlayer(unittest.TestCase):
         game_type = GameType.query.filter_by(name="Chess").first()
         assert game_type.max_players == 3
 
+    def testPutGametypeDuplicate(self):
+        db.session.add(GameType(name="Chess"))
+        db.session.add(GameType(name="3D Chess"))
+        db.session.commit()
+
+        put_data = {
+            "name": "3D Chess"
+        }
+        response = self.client.put(
+            ITEM_URL.replace("<gametype_name>", "Chess"),
+            data=json.dumps(put_data),
+            content_type="application/json"
+        )
+
+        assert response.status_code == 409, response.status_code
+        assert GameType.query.count() == 2, GameType.query.count()
+
     def testDeleteGametype(self):
         db.session.add(GameType(name="Chess"))
         db.session.commit()
@@ -125,7 +158,7 @@ class TestPlayer(unittest.TestCase):
         response = self.client.delete(url)
 
         assert response.status_code == 204, response.status_code
-        assert GameType.query.count() == 0
+        assert GameType.query.count() == 0, GameType.query.count()
 
     def testDeleteNonExistingGametype(self):
         db.session.add(GameType(name="Chess"))
@@ -135,4 +168,4 @@ class TestPlayer(unittest.TestCase):
         response = self.client.delete(url)
 
         assert response.status_code == 404, response.status_code
-        assert GameType.query.count() == 1
+        assert GameType.query.count() == 1, GameType.query.count()
