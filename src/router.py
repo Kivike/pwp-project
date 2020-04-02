@@ -4,8 +4,14 @@ from src.resource.leaderboard import LeaderboardGametype, LeaderboardPlayer
 from src.resource.player import PlayerResource, PlayerCollection
 from src.resource.score import GameScoreboard, PlayerScoreResource
 from src.resource.tournament import TournamentResource, TournamentCollection
+from src.utils import MasonBuilder
+import json
 
-from flask_restful import Api
+from flask_restful import Api, url_for
+from flask import Response
+
+MASON = "application/vnd.mason+json"
+NAMESPACE_URL = "/gamescore/link-relations#"
 
 def route_app(app):
     api = Api(app)
@@ -13,6 +19,16 @@ def route_app(app):
     @app.route("/")
     def index():
         return "Index"
+
+    @app.route("/api/")
+    def entry():
+        body = MasonBuilder()
+        body.add_namespace("gamescr", NAMESPACE_URL)
+        body.add_control("gamescr:all-tournaments", href=url_for("tournamentcollection"), title="All tournaments")
+        body.add_control("gamescr:all-games", href=url_for("gamecollection"), title="All games")
+        body.add_control("gamescr:all-players", href=url_for("playercollection"), title="All players")
+        return Response(json.dumps(body), 200, mimetype=MASON)
+
 
     api.add_resource(GameResource, "/api/games/<game_name>/")
     api.add_resource(GameCollection, "/api/games/")
