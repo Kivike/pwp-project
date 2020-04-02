@@ -41,6 +41,8 @@ class PlayerScore(db.Model):
     player = db.relationship("Player", back_populates="score")
     game = db.relationship("Game", back_populates="scores")
 
+    __table__args__ = (db.UniqueConstraint('player_id', 'game_id', '_player_id_game_id_uc'),)
+
 #A type of game, used to differentiate different kind of games from each other 
 class GameType(db.Model):
     id = db.Column(db.Integer, primary_key=True) 
