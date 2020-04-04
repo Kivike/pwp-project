@@ -136,6 +136,24 @@ class TestScore(unittest.TestCase):
 
         assert response.status_code == 404, response.status_code
 
+    def testGetPlayerScore(self):
+        game_type = GameType(name="Uno")
+        game = Game(game_token="test12345", game_type=game_type)
+        player = Player(name="Jamppa")
+        score = PlayerScore(game=game, player=player)
+
+        db.session.add(game_type)
+        db.session.add(game)
+        db.session.add(player)
+        db.session.add(score)
+        db.session.commit()
+
+        url = SCORE_URL.replace("<game_token>", "test12345")
+        url = url.replace("<player_name>", "Jamppa")
+
+        response = self.client.get(url)
+        assert response.status_code == 200, response.status_code
+
     def testPutScore(self):
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)

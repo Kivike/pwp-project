@@ -31,6 +31,9 @@ class TestPlayer(unittest.TestCase):
         assert response.status_code == 404, response.status_code
 
     def testGetGame(self):
+        """
+        Test for successfully retrieving a specific game
+        """
         host = Player(name="Alice")
         db.session.add(host)
 
@@ -46,7 +49,39 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 200, response.status_code
 
+    def testGetGameCollection(self):
+        """
+        Test for successfully retrieving a collection of games
+        """
+        response = self.client.get(COLLECTION_URL)
+
+        assert response.status_code == 200, response.status_code
+        assert response.data is not None
+        json_object = json.loads(response.data)
+        assert json_object is not None
+        assert len(json_object['items']) == 0
+
+        host = Player(name="Alice")
+        db.session.add(host)
+        game_type = GameType(name="Korona")
+        db.session.add(game_type)
+
+        db.session.add(Game(host=host, game_type=game_type, game_token="test123"))
+        db.session.add(Game(host=host, game_type=game_type, game_token="test1234"))
+        db.session.commit()
+
+        response = self.client.get(COLLECTION_URL)
+
+        assert response.status_code == 200, response.status_code
+        assert response.data is not None
+        json_object = json.loads(response.data)
+        assert json_object is not None
+        assert len(json_object['items']) == 2, len(json_object['items'])
+
     def testPostGame(self):
+        """
+        Test for successfull game add
+        """
         host = Player(name="Alice")
         db.session.add(host)
 
@@ -68,6 +103,10 @@ class TestPlayer(unittest.TestCase):
         assert GameType.query.count() == 1
 
     def testPostGameWithoutHost(self):
+        """
+        Test for adding a game with missing required data (host)
+        Error 400 expected
+        """
         game_type = GameType(name="Korona")
         db.session.add(game_type)
         db.session.commit()
@@ -84,6 +123,10 @@ class TestPlayer(unittest.TestCase):
         assert Game.query.count() == 0
 
     def testPostGameWithoutType(self):
+        """
+        Test for adding a game with missing required data (gametype)
+        Error 400 expected
+        """
         host = Player(name="Alice")
         db.session.add(host)
         db.session.commit()
@@ -100,6 +143,10 @@ class TestPlayer(unittest.TestCase):
         assert Game.query.count() == 0
 
     def testPostGameInvalidContent(self):
+        """
+        Test for posting invalid data as json
+        Error 400 expected
+        """
         response = self.client.post(
             COLLECTION_URL,
             data="notavalidjson",
@@ -109,6 +156,10 @@ class TestPlayer(unittest.TestCase):
         assert Game.query.count() == 0
 
     def testPostGameInvalidContentType(self):
+        """
+        Test for trying to add game with invalid content type
+        415 error expected
+        """
         host = Player(name="Alice")
         db.session.add(host)
 
@@ -126,8 +177,36 @@ class TestPlayer(unittest.TestCase):
         )
         assert response.status_code == 415, response.status_code
         assert Game.query.count() == 0
+
+    def testPutGameValidRename(self):
+        """
+        Test for successfully renaming a game
+        """
+        host = Player(name="Alice")
+        db.session.add(host)
+
+        game_type = GameType(name="Korona")
+        db.session.add(game_type)
+
+        game = Game(host=host, game_type=game_type, game_token="test123")
+        db.session.add(game)
+        db.session.commit()
+
+        url = ITEM_URL.replace("<game_token>", "test123")
+        response = self.client.put(
+            url,
+            data=json.dumps({"host": "Alice",
+            "game_type": "Korona", "name": "Newname"}),
+            content_type='application/json'
+        )
+
+        assert response.status_code == 201, response.status_code
+        assert Game.query.filter_by(game_token="Newname").count() == 1, Game.query.filter_by(game_token="Newname").count()
     
     def testDeleteGame(self):
+        """
+        Test for successful game deletion
+        """
         host = Player(name="Alice")
         db.session.add(host)
 
@@ -145,6 +224,9 @@ class TestPlayer(unittest.TestCase):
         assert Game.query.count() == 0
 
     def testDeleteNonExistingGame(self):
+        """
+        Test for error when deleting non existing game
+        """
         url = ITEM_URL.replace("<game_token>", "doesnotexist")
         response = self.client.delete(url)
 
