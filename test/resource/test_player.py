@@ -30,12 +30,6 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 404, response.status_code
 
-    def testDeleteNonExistingPlayer(self):
-        url = ITEM_URL.replace('<player_name>', 'idontexist')
-        response = self.client.get(url)
-
-        assert response.status_code == 404, response.status_code
-
     def testPostValidPlayer(self):
         response = self.postValidPlayer("Testaaja")
 
@@ -60,7 +54,7 @@ class TestPlayer(unittest.TestCase):
         response = self.client.delete(delete_url)
 
         assert response.status_code == 204, response.status_code
-        assert Player.query.count() == 0, GameType.query.count()
+        assert Player.query.count() == 0, Player.query.count()
 
     def testDeleteNonExistingPlayer(self):
         delete_url = ITEM_URL.replace('<player_name>', 'Santa Claus')
