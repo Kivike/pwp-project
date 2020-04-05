@@ -1,3 +1,11 @@
 [run]
 source = src
-omit = src/example.py
+omit = 
+    src/example.py
+    src/resource/leaderboard.py
+    src/resource/tournament.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    click

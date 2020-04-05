@@ -39,7 +39,7 @@ class TestGametype(unittest.TestCase):
         """
         Test for successful gametype retrieval
         """
-        db.session.add(GameType(name="Chess"))
+        db.session.add(GameType(name="Chess", min_players=2, max_players=2))
         db.session.commit
 
         url = ITEM_URL.replace("<gametype_name>", "Chess")
@@ -57,7 +57,7 @@ class TestGametype(unittest.TestCase):
         assert len(json_object['items']) == 0
 
 
-        db.session.add(GameType(name="Chess"))
+        db.session.add(GameType(name="Chess", min_players=2, max_players=2))
         db.session.add(GameType(name="Bridge"))
         db.session.commit()
 
@@ -192,6 +192,38 @@ class TestGametype(unittest.TestCase):
 
         assert response.status_code == 409, response.status_code
         assert GameType.query.count() == 2, GameType.query.count()
+
+    def testPutGametypeInvalidContent(self):
+        """
+        Test for trying to edit with invalid content
+        415 error expected
+        """
+        db.session.add(GameType(name="Chess", max_players=2))
+        db.session.commit()
+
+        response = self.client.put(
+            ITEM_URL.replace("<gametype_name>", "Chess"),
+            data="ASDASD"
+        )
+        assert response.status_code == 415, response.status_code
+        assert GameType.query.count() == 1, GameType.query.count()
+
+    def testPutGametypeInvalidSchema(self):
+        """
+        Test for trying to add an invalid gametype
+        400 error expected
+        """
+        db.session.add(GameType(name="Chess", max_players=2))
+        db.session.commit()
+
+        response = self.client.put(
+            ITEM_URL.replace("<gametype_name>", "Chess"),
+            data=json.dumps({"shoe_size": 10}),
+            content_type="application/json"
+        )
+
+        assert response.status_code == 400, response.status_code
+        assert GameType.query.count() == 1, GameType.query.count()
 
     def testDeleteGametype(self):
         """

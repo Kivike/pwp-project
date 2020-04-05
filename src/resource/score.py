@@ -20,8 +20,7 @@ class GameScoreboard(Resource):
         if db_game is None:
             return create_error_response(404, "Game not found")
         scores = PlayerScore.query.filter_by(game_id=db_game.id).all()
-        if scores is None:
-            return Response(status=204)
+
         for db_score in scores:
             player = db_score.player.name
             game = db_score.game.game_token
@@ -83,8 +82,6 @@ class GameScoreboard(Resource):
             "Location": url_for("playerscoreresource", game_name=game_name, player_name=db_player.name)
             })
         
-
-    
 class PlayerScoreResource(Resource):
     
     def get(self, game_name, player_name):
@@ -168,9 +165,6 @@ class PlayerScoreResource(Resource):
             })
         else:
             return Response(status=204)
-
-            
-
 
     def delete(self, game_name, player_name):
         db_game = Game.query.filter_by(game_token=game_name).first()

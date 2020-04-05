@@ -29,13 +29,22 @@ def route_app(app):
         body.add_control("gamescr:all-players", href=url_for("playercollection"), title="All players")
         return Response(json.dumps(body), 200, mimetype=MASON)
 
-
     api.add_resource(GameResource, "/api/games/<game_name>/")
     api.add_resource(GameCollection, "/api/games/")
 
     api.add_resource(GametypeResource, "/api/gametypes/<gametype_name>/")
     api.add_resource(GametypeCollection, "/api/gametypes/")
 
+    api.add_resource(PlayerResource, "/api/players/<player_name>/")
+    api.add_resource(PlayerCollection, "/api/players/")
+
+    api.add_resource(GameScoreboard, "/api/games/<game_name>/scoreboard/")
+    api.add_resource(PlayerScoreResource, "/api/games/<game_name>/scoreboard/<player_name>/")
+
+    route_leaderboard(app, api)
+    route_tournament(app, api)
+
+def route_leaderboard(app, api): # pragma: no cover
     api.add_resource(
         LeaderboardGametype,
         "/api/leaderboard/gametype/<gametype_name>/",
@@ -47,11 +56,6 @@ def route_app(app):
         "/api/players/<player_name>/leaderboard/"
     )
 
-    api.add_resource(PlayerResource, "/api/players/<player_name>/")
-    api.add_resource(PlayerCollection, "/api/players/")
-
-    api.add_resource(GameScoreboard, "/api/games/<game_name>/scoreboard/")
-    api.add_resource(PlayerScoreResource, "/api/games/<game_name>/scoreboard/<player_name>/")
-
+def route_tournament(app, api): # pragma: no cover
     api.add_resource(TournamentResource, "/api/tournaments/<tournament_token>/")
     api.add_resource(TournamentCollection, "/api/tournaments/")
