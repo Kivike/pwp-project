@@ -35,7 +35,9 @@ Create an empty database with tables created by running `flask init-db` in the r
 This is mandatory especially in "production" environment of Flask. 
 In "production" environment, the command creates a database file called "gamescores.db" in db-folder.
 
-### Running the application
+## Running the application
+
+Remember to setup the database before running the application.
 
 If you want to run the application, run __in the root directory of the project__:
 
@@ -52,7 +54,7 @@ Available modes:
 To run the app in production mode:
 ``` FLASK_ENV=live flask run ```
 
-### Run the tests
+## Run the tests
 
 In order to run all the unit tests on the database and resources with coverage reporting, run __in the root directory of the project__:
 
