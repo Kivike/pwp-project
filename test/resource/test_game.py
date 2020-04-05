@@ -104,6 +104,7 @@ class TestPlayer(unittest.TestCase):
         game_data = {
             "host": "Alice",
             "game_type": "Korona",
+            "status": 0
         }
 
         response = self.client.post(
@@ -325,6 +326,33 @@ class TestPlayer(unittest.TestCase):
         game = Game.query.first()
 
         assert game.finished_at is None, game.finished_at
+
+    def testPutGameWithoutType(self):
+        """
+        Test for editing a game with missing required data (gametype)
+        Error 400 expected
+        """
+        host = Player(name="Alice")
+        db.session.add(host)
+        game_type = GameType(name="Korona")
+        db.session.add(game_type)
+
+        game = Game(host=host, game_type=game_type, game_token="test123")
+        db.session.add(game)
+        db.session.commit()
+
+        game_data = {
+            "host": "Alice"
+        }
+
+        url = ITEM_URL.replace("<game_token>", "test123")
+        response = self.client.put(
+            url,
+            data=json.dumps(game_data),
+            content_type='application/json'
+        )
+        assert response.status_code == 400, response.status_code
+        assert Game.query.count() == 1
 
     def testPutNonExistingGame(self):
         host = Player(name="Alice")
