@@ -15,13 +15,13 @@ The requirements.txt file includes all the dependencies. Run `pip install -r req
 
 ### Installing the project
 
-Run `pip install - e .` in the project folder in a virtual environment. After that the project works correctly.
+Run `pip install -e .` in the project folder in a virtual environment. After that the project works correctly.
 
 ### Database version
 
 We are using SQLite 3.28.0
 
-### Create an example populated database
+### Create an example populated database for development environment
 
 Example.py in src-folder creates an example populated database. If you run example.py, a database called test.db is created in db-folder.
 
@@ -29,6 +29,11 @@ Example.py in src-folder creates an example populated database. If you run examp
 
 The same database that example.py creates can be found in the db-folder with the name deliverable2.db
 
+### Create an empty database
+
+Create an empty database with tables created by running `flask init-db` in the root directory of the project.
+This is mandatory especially in "production" environment of Flask. 
+In "production" environment, the command creates a database file called "gamescores.db" in db-folder.
 
 ### Running the application
 
@@ -47,9 +52,9 @@ Available modes:
 To run the app in production mode:
 ``` FLASK_ENV=live flask run ```
 
-### Run the tests on the database
+### Run the tests
 
-In order to run all the unit tests on the database with coverage reporting, run __in the root directory of the project__:
+In order to run all the unit tests on the database and resources with coverage reporting, run __in the root directory of the project__:
 
 ``` coverage run -m unittest -v && coverage report ```
 
@@ -60,6 +65,8 @@ To run all the unit tests without coverage reporting, run __in the root director
 To just run a single test file, run __in the root directory of the project__:
 
 ``` python -m unittest -v test/name_of_file.py```
+
+The resource test files are in test/resource/ directory.
 
 To run a single test function, run __in the root directory of the project__ for example:
 
