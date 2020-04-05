@@ -53,7 +53,7 @@ class TestScore(unittest.TestCase):
         game = Game(game_token="test12345", game_type=game_type)
         player_a = Player(name="Testman A")
         player_b = Player(name="Testman B")
-        score_a = PlayerScore(player=player_a, game=game)
+        score_a = PlayerScore(player=player_a, game=game, score=8.5)
         score_b = PlayerScore(player=player_b, game=game)
 
         db.session.add(game_type)
@@ -208,6 +208,56 @@ class TestScore(unittest.TestCase):
 
         assert response.status_code == 404, response.status_code
 
+    def testPutScoreNonExistingPlayer(self):
+        game_type = GameType(name="Uno")
+        game = Game(game_token="test12345", game_type=game_type)
+
+        db.session.add(game_type)
+        db.session.add(game)
+        db.session.commit()
+
+        url = SCORE_URL.replace("<game_token>", "test12345")
+        url = url.replace("<player_name>", "Jamppa")
+
+        put_data = {
+            "player": "Jamppa",
+            "score": 10
+        }
+
+        response = self.client.put(
+            url,
+            data=json.dumps(put_data),
+            content_type="application/json"
+        )
+
+        assert response.status_code == 404, response.status_code
+
+    def testPutScoreNonExistingScore(self):
+        game_type = GameType(name="Uno")
+        game = Game(game_token="test12345", game_type=game_type)
+        player = Player(name="Jamppa")
+
+        db.session.add(game_type)
+        db.session.add(game)
+        db.session.add(player)
+        db.session.commit()
+
+        url = SCORE_URL.replace("<game_token>", "test12345")
+        url = url.replace("<player_name>", "Jamppa")
+
+        put_data = {
+            "player": "Jamppa",
+            "score": 10
+        }
+
+        response = self.client.put(
+            url,
+            data=json.dumps(put_data),
+            content_type="application/json"
+        )
+
+        assert response.status_code == 404, response.status_code
+
     def testPutScoreDuplicatePlayer(self):
         """
         Change player of a score to one that already has score for the game
@@ -281,6 +331,21 @@ class TestScore(unittest.TestCase):
         url = SCORE_URL.replace("<game_token>", "test12345")
         url = url.replace("<player_name>", "idontexist")
 
+        response = self.client.delete(url)
+
+        assert response.status_code == 404, response.status_code
+
+    def testDeleteNonExistingScore(self):
+        game_type = GameType(name="Uno")
+        game = Game(game_token="test12345", game_type=game_type)
+        player = Player(name="Jamppa")
+
+        db.session.add(game_type)
+        db.session.add(game)
+        db.session.add(player)
+
+        url = SCORE_URL.replace("<game_token>", "test12345")
+        url = url.replace("<player_name>", "Jamppa")
         response = self.client.delete(url)
 
         assert response.status_code == 404, response.status_code

@@ -39,7 +39,7 @@ class TestGametype(unittest.TestCase):
         """
         Test for successful gametype retrieval
         """
-        db.session.add(GameType(name="Chess"))
+        db.session.add(GameType(name="Chess", min_players=2, max_players=2))
         db.session.commit
 
         url = ITEM_URL.replace("<gametype_name>", "Chess")
@@ -57,7 +57,7 @@ class TestGametype(unittest.TestCase):
         assert len(json_object['items']) == 0
 
 
-        db.session.add(GameType(name="Chess"))
+        db.session.add(GameType(name="Chess", min_players=2, max_players=2))
         db.session.add(GameType(name="Bridge"))
         db.session.commit()
 

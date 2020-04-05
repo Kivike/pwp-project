@@ -19,8 +19,7 @@ class GameCollection(Resource):
     def get(self):
         items = []
         games = Game.query.all()
-        if games is None:
-            return Response(status=204)
+        
         for db_game in games:
             name = db_game.game_token
             status = db_game.status

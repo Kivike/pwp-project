@@ -16,8 +16,7 @@ class GametypeCollection(Resource):
     def get(self):
         items = []
         gametypes = GameType.query.all()
-        if gametypes is None:
-            return Response(status=204)
+        
         for db_gametype in gametypes:
             name = db_gametype.name
             body = GametypeBuilder(

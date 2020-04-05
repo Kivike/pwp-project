@@ -53,6 +53,15 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 409, response.status_code
 
+    def testPostPlayerInvalidSchema(self):
+        response = self.client.post(
+            COLLECTION_URL,
+            data=json.dumps({"foot_size": 123}),
+            content_type="application/json"
+        )
+        assert response.status_code == 400, response.status_code
+        assert Player.query.count() == 0
+
     def testDeleteExistingPlayer(self):
         db.session.add(Player(name="Testaaja"))
         db.session.commit()
@@ -144,7 +153,7 @@ class TestPlayer(unittest.TestCase):
         response = self.client.put(
             edit_url,
             data=json.dumps({"color": "green"}),
-            content_type='application/json'
+            content_type="application/json"
         )
         assert response.status_code == 400, response.status_code
         assert Player.query.count() == 1, Player.query.count()
@@ -157,8 +166,20 @@ class TestPlayer(unittest.TestCase):
         edit_url = ITEM_URL.replace('<player_name>', 'Testaaja')
         response = self.client.put(
             edit_url,
-            data='notavalidjson',
+            data="{////SDGF}",
             content_type='application/json'
         )
 
         assert response.status_code == 400, response.status_code
+
+    def testPutPlayerMissingContenttype(self):
+        player = Player(name="Testaaja")
+        db.session.add(player)
+        db.session.commit()
+
+        edit_url = ITEM_URL.replace('<player_name>', 'Testaaja')
+        response = self.client.put(
+            edit_url,
+            data=json.dumps({"name": "Testaaja ABC"})
+        )
+        assert response.status_code == 415, response.status_code

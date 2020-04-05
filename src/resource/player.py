@@ -19,8 +19,7 @@ class PlayerCollection(Resource):
     def get(self):
         items = []
         players = Player.query.all()
-        if players is None:
-            return Response(status=204)
+
         for player in players:
             name = player.name
             body = PlayerBuilder(
@@ -62,7 +61,6 @@ class PlayerCollection(Resource):
         return Response(status=201, headers={
             "Location": url_for("playerresource", player_name=request.json["name"])
         })
-        
 
 #Resource representing a single player
 class PlayerResource(Resource):
@@ -83,13 +81,12 @@ class PlayerResource(Resource):
         body.add_control_delete_player(name=player_name)
 
         return Response(json.dumps(body), 200, mimetype=MASON)
-
-
         
     #Edit a player
     def put(self, player_name):
         if not request.json:
             return create_error_response(415, "Unsupported Media Type", "use JSON")
+            
         db_player = Player.query.filter_by(name=player_name).first()
         if db_player is None:
             return create_error_response(404, "Player not found")
@@ -113,8 +110,6 @@ class PlayerResource(Resource):
             "Location": url_for("playerresource", player_name=new_name)
         })
 
-
-          
     #Delete a player
     def delete(self, player_name):
         db_player = Player.query.filter_by(name=player_name).first()

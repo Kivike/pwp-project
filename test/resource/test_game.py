@@ -183,6 +183,61 @@ class TestPlayer(unittest.TestCase):
         Test for successfully renaming a game
         """
         host = Player(name="Alice")
+        host_alter = Player(name="Bob")
+        db.session.add(host)
+        db.session.add(host_alter)
+
+        game_type = GameType(name="Korona")
+        game_type_alter = GameType(name="Blind Korona")
+        db.session.add(game_type)
+        db.session.add(game_type_alter)
+
+        game = Game(host=host, game_type=game_type, game_token="test123")
+        db.session.add(game)
+        db.session.commit()
+
+        url = ITEM_URL.replace("<game_token>", "test123")
+
+        alter_data = {
+            "host" : host_alter.name,
+            "game_type": game_type_alter.name,
+            "name": "test999"
+        }
+
+        response = self.client.put(
+            url,
+            data=json.dumps(alter_data),
+            content_type="application/json"
+        )
+
+        assert response.status_code == 201, response.status_code
+        game = Game.query.first()
+
+        assert game.game_token == "test999", game.game_token
+        assert game.host == host_alter, game.host
+        assert game.game_type == game_type_alter, game.game_type
+    
+    def testPutNonExistingGame(self):
+        host = Player(name="Alice")
+        db.session.add(host)
+        db.session.commit()
+
+        put_data = {
+            "host": "Alice",
+            "game_type": "Korona"
+        }
+        url = ITEM_URL.replace("<game_token>", "doesnotexist")
+
+        response = self.client.put(
+            url,
+            data=json.dumps(put_data),
+            content_type="application/json"
+        )
+
+        assert response.status_code == 404, response.status_code
+
+    def testPutGameNonExistingData(self):
+        host = Player(name="Alice")
         db.session.add(host)
 
         game_type = GameType(name="Korona")
@@ -192,17 +247,29 @@ class TestPlayer(unittest.TestCase):
         db.session.add(game)
         db.session.commit()
 
-        url = ITEM_URL.replace("<game_token>", "test123")
-        response = self.client.put(
-            url,
-            data=json.dumps({"host": "Alice",
-            "game_type": "Korona", "name": "Newname"}),
-            content_type='application/json'
-        )
+        orig_data = {
+            "host": "Alice",
+            "game_type": "Korona",
+            "name": "test123"
+        }
+        alter_data = {
+            "host": "Bob",
+            "game_type": "Uno"
+        }
+       
+        for key in alter_data:
+            put_data = orig_data.copy()
+            put_data[key] = alter_data[key]
 
-        assert response.status_code == 201, response.status_code
-        assert Game.query.filter_by(game_token="Newname").count() == 1, Game.query.filter_by(game_token="Newname").count()
-    
+            url = ITEM_URL.replace("<game_token>", "test123")
+
+            response = self.client.put(
+                url,
+                data=json.dumps(put_data),
+                content_type="application/json"
+            )
+            assert response.status_code == 409, response.status_code
+
     def testDeleteGame(self):
         """
         Test for successful game deletion
