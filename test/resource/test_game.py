@@ -114,6 +114,66 @@ class TestPlayer(unittest.TestCase):
         assert response.status_code == 201, response.status_code
         assert GameType.query.count() == 1
 
+    def testPostGameWithName(self):
+        """
+        Test for successfull game add with specified name
+        """
+        host = Player(name="Alice")
+        db.session.add(host)
+
+        game_type = GameType(name="Korona")
+        db.session.add(game_type)
+        db.session.commit()
+
+        game_data = {
+            "host": "Alice",
+            "game_type": "Korona",
+            "name": "Koronamatsi"
+        }
+
+        response = self.client.post(
+            COLLECTION_URL,
+            data=json.dumps(game_data),
+            content_type='application/json'
+        )
+        assert response.status_code == 201, response.status_code
+        assert GameType.query.count() == 1
+
+    def testPostGameWithSameName(self):
+        """
+        Test for trying to add a game with already used name
+        """
+        host = Player(name="Alice")
+        db.session.add(host)
+        host2 = Player(name="James")
+        db.session.add(host2)
+
+        game_type = GameType(name="Korona")
+        db.session.add(game_type)
+        db.session.commit()
+
+        game = Game(
+            host=host,
+            game_type=game_type,
+            game_token="test123"
+        )
+        db.session.add(game)
+        db.session.commit()
+
+        game_data = {
+            "host": "James",
+            "game_type": "Korona",
+            "name": "test123"
+        }
+
+        response = self.client.post(
+            COLLECTION_URL,
+            data=json.dumps(game_data),
+            content_type='application/json'
+        )
+        assert response.status_code == 409, response.status_code
+        assert Game.query.count() == 1
+
     def testPostGameWithoutHost(self):
         """
         Test for adding a game with missing required data (host)
