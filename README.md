@@ -36,6 +36,8 @@ If you want to run the application, run __in the root directory of the project__
 
 ``` flask run ```
 
+API entry point is ``` http://localhost:5000/api/ ```
+
 Run environment can be set with FLASK_ENV environmental variable. If the value isn't set, dev mode is used.
 Available modes:
 - __development__ (database is permanently stored in file db/test.db)
