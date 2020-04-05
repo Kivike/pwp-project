@@ -1,5 +1,9 @@
 from src.extensions import db
 from sqlalchemy.sql import func
+from flask.cli import with_appcontext
+import click
+
+
 
 '''This file contains all the ORM models for the database'''
 
@@ -78,3 +82,11 @@ class Tournament(db.Model):
     finished_at = db.Column(db.DateTime)
 
     game = db.relationship("Game", back_populates="tournament")
+
+
+# Initialize database. From:
+# https://lovelace.oulu.fi/ohjelmoitava-web/programmable-web-project-spring-2020/flask-api-project-layout/#using-the-command-line-interface
+@click.command("init-db")
+@with_appcontext
+def init_db_command():
+    db.create_all()

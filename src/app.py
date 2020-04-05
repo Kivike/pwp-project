@@ -6,6 +6,7 @@ from src.router import route_app
 
 from src.extensions import db
 
+
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
@@ -13,6 +14,9 @@ def create_app(config_name):
 
     db.init_app(app)
     route_app(app)
+    import src.orm_models
+    app.cli.add_command(src.orm_models.init_db_command)
+
 
     return app
     
