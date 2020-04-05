@@ -15,6 +15,8 @@ class MasonBuilder(dict):
     useful subclass defined next. This class is generic in the sense that it
     does not contain any application specific implementation details.
     """
+    #From exercise 3 material
+    #https://lovelace.oulu.fi/ohjelmoitava-web/programmable-web-project-spring-2020/implementing-rest-apis-with-flask/
 
     def add_error(self, title, details):
         """
@@ -294,6 +296,8 @@ class ScoreBuilder(MasonBuilder):
 
 
 def create_error_response(status_code, title, message=None):
+    #From exercise 3 material
+    #https://lovelace.oulu.fi/ohjelmoitava-web/programmable-web-project-spring-2020/implementing-rest-apis-with-flask/
     resource_url = request.path
     body = MasonBuilder(resource_url=resource_url)
     body.add_error(title, message)

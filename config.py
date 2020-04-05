@@ -9,12 +9,16 @@ class Config:
         pass
 
 class TestConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
 
 class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db/test.db')
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "db/test.db")
+
+class ProductionConfig(Config):
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "db/gamescores.db")
 
 config = {
     'test': TestConfig,
-    'dev': DevelopmentConfig
+    'development': DevelopmentConfig,
+    'production': ProductionConfig
 }
