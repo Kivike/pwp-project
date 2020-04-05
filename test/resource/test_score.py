@@ -341,6 +341,38 @@ class TestScore(unittest.TestCase):
         )
         assert response.status_code == 409, response.status_code
 
+    def testPutScoreNewUrl(self):
+        """
+        Change player of a score so that url changes
+        """
+        game_type = GameType(name="Uno")
+        game = Game(game_token="test12345", game_type=game_type)
+        player_a = Player(name="Player A")
+        player_b = Player(name="Player B")
+        score_a = PlayerScore(game=game, player=player_a)
+
+        db.session.add(game_type)
+        db.session.add(game)
+        db.session.add(player_a)
+        db.session.add(player_b)
+        db.session.add(score_a)
+        db.session.commit()
+
+        put_data = {
+            "player": "Player B",
+            "score": 100,
+            "game": "test12345"
+        }
+        url = SCORE_URL.replace("<game_token>", "test12345")
+        url = url.replace("<player_name>", "Player A")
+
+        response = self.client.put(
+            url,
+            data=json.dumps(put_data),
+            content_type="application/json"
+        )
+        assert response.status_code == 201, response.status_code
+
     def testPutScoreInvalidSchema(self):
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
