@@ -48,7 +48,7 @@ class TestScore(unittest.TestCase):
         data = json.loads(response.data.decode("utf-8"))
         assert len(data["items"]) == 0
 
-    def testGetScoreboard(self):
+    def testGetGameScoreboard(self):
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         player_a = Player(name="Testman A")
@@ -72,7 +72,7 @@ class TestScore(unittest.TestCase):
         data = json.loads(response.data.decode("utf-8"))
         assert len(data["items"]) == 2
 
-    def testPostScore(self):
+    def testPostValidScore(self):
         game = Game(game_token="test12345")
         player = Player(name="Jamppa")
 
@@ -154,7 +154,10 @@ class TestScore(unittest.TestCase):
         response = self.client.get(url)
         assert response.status_code == 200, response.status_code
 
-    def testPutScore(self):
+    def testPutScoreEditScore(self):
+        """
+        Make a valid put request to change score value of a PlayerScore
+        """
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         player = Player(name="Jamppa")
@@ -205,7 +208,10 @@ class TestScore(unittest.TestCase):
 
         assert response.status_code == 404, response.status_code
 
-    def testPutScoreDuplicate(self):
+    def testPutScoreDuplicatePlayer(self):
+        """
+        Change player of a score to one that already has score for the game
+        """
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         player_a = Player(name="Player A")
@@ -236,7 +242,7 @@ class TestScore(unittest.TestCase):
         )
         assert response.status_code == 409, response.status_code
 
-    def testDeletePlayerScore(self):
+    def testDeleteExistingPlayerScore(self):
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         player = Player(name="Jamppa")
@@ -280,6 +286,9 @@ class TestScore(unittest.TestCase):
         assert response.status_code == 404, response.status_code
 
     def testDeleteGameDeletesScores(self):
+        """
+        Test that deleting game of a score also deletes scores for that game
+        """
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         player_a = Player(name="Testman A")
@@ -301,7 +310,8 @@ class TestScore(unittest.TestCase):
         assert response.status_code == 204
         assert PlayerScore.query.count() == 0, PlayerScore.query.count()
 
-    def testDeleteScorePlayer(self):
+    def testDeleteScorePlayerDeletesScore(self):
+        """Test that deleting player of a score also deletes the score of that player"""
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         player = Player(name="Testman")

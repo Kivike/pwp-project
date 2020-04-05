@@ -31,22 +31,29 @@ class TestPlayer(unittest.TestCase):
         assert response.status_code == 404, response.status_code
 
     def testPostValidPlayer(self):
-        response = self.postValidPlayer("Testaaja")
-
+        response = self.client.post(
+            COLLECTION_URL,
+            data=json.dumps({"name": "Testaaja"}),
+            content_type='application/json'
+        )
         assert response.status_code == 201, response.status_code
 
         player = Player.query.first()
         assert isinstance(player, Player)
 
-    def testPostPlayerDuplicate(self):
+    def testPostPlayerDuplicateName(self):
         db.session.add(Player(name="Testaaja"))
         db.session.commit()
 
-        response = self.postValidPlayer("Testaaja")
+        response = self.client.post(
+            COLLECTION_URL,
+            data=json.dumps({"name": "Testaaja"}),
+            content_type='application/json'
+        )
 
         assert response.status_code == 409, response.status_code
 
-    def testDeletePlayer(self):
+    def testDeleteExistingPlayer(self):
         db.session.add(Player(name="Testaaja"))
         db.session.commit()
 
@@ -62,7 +69,7 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 404, response.status_code
 
-    def testGetPlayerCollection(self):
+    def testGetEmptyPlayerCollection(self):
         response = self.client.get(COLLECTION_URL)
 
         assert response.status_code == 200, response.status_code
@@ -71,6 +78,7 @@ class TestPlayer(unittest.TestCase):
         assert json_object is not None
         assert len(json_object['items']) == 0
 
+    def testGetPlayerCollectionWithItems(self):
         db.session.add(Player(name="Player A"))
         db.session.add(Player(name="Player B"))
         db.session.commit()
@@ -83,7 +91,7 @@ class TestPlayer(unittest.TestCase):
         assert json_object is not None
         assert len(json_object['items']) == 2, len(json_object['items'])
 
-    def testGetPlayer(self):
+    def testGetExistingPlayer(self):
         player = Player(name="Testaaja")
         db.session.add(player)
         db.session.commit()
@@ -113,8 +121,9 @@ class TestPlayer(unittest.TestCase):
         assert Player.query.filter_by(name="Newname").count() == 1, Player.query.filter_by(name="Newname").count()
 
     def testPutPlayerExistingName(self):
-        self.postValidPlayer("Player A")
-        self.postValidPlayer("Player B")
+        db.session.add(Player(name="Player A"))
+        db.session.add(Player(name="Player B"))
+        db.session.commit()
 
         edit_url = ITEM_URL.replace('<player_name>', 'Player A')
         response = self.client.put(
@@ -127,7 +136,9 @@ class TestPlayer(unittest.TestCase):
         assert Player.query.filter_by(name="Player B").count() == 1, Player.query.filter_by(name="Player B").count()
 
     def testPutPlayerInvalidSchema(self):
-        self.postValidPlayer("Testaaja")
+        player = Player(name="Testaaja")
+        db.session.add(player)
+        db.session.commit()
 
         edit_url = ITEM_URL.replace('<player_name>', 'Testaaja')
         response = self.client.put(
@@ -139,7 +150,9 @@ class TestPlayer(unittest.TestCase):
         assert Player.query.count() == 1, Player.query.count()
 
     def testPutPlayerInvalidDatatype(self):
-        self.postValidPlayer("Testaaja")
+        player = Player(name="Testaaja")
+        db.session.add(player)
+        db.session.commit()
 
         edit_url = ITEM_URL.replace('<player_name>', 'Testaaja')
         response = self.client.put(
@@ -149,11 +162,3 @@ class TestPlayer(unittest.TestCase):
         )
 
         assert response.status_code == 400, response.status_code
-
-    def postValidPlayer(self, name):
-        return self.client.post(
-            COLLECTION_URL,
-            data=json.dumps({"name": name}),
-            content_type='application/json'
-        )
-        
