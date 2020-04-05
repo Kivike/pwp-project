@@ -154,6 +154,55 @@ class TestScore(unittest.TestCase):
         response = self.client.get(url)
         assert response.status_code == 200, response.status_code
 
+    def testGetNonExistingGamePlayerScore(self):
+        """
+        Error test for retrieving player score for nonexisting game
+        """
+        player = Player(name="Jamppa")
+        db.session.add(player)
+        db.session.commit()
+
+        url = SCORE_URL.replace("<game_token>", "nothere")
+        url = url.replace("<player_name>", "Jamppa")
+        response = self.client.get(url)
+
+        assert response.status_code == 404, response.status_code
+
+    def testGetNonExistingPlayerPlayerScore(self):
+        """
+        Error test for retrieving player score for nonexisting player
+        """
+        game_type = GameType(name="Uno")
+        game = Game(game_token="test12345", game_type=game_type)
+        db.session.add(game_type)
+        db.session.add(game)
+        db.session.commit()
+
+        url = SCORE_URL.replace("<game_token>", "test12345")
+        url = url.replace("<player_name>", "idontexist")
+        response = self.client.get(url)
+
+        assert response.status_code == 404, response.status_code
+
+    def testGetNonExistingPlayerScore(self):
+        """
+        Error test when player and game exist, but the player score does not
+        """
+        game_type = GameType(name="Uno")
+        game = Game(game_token="test12345", game_type=game_type)
+        player = Player(name="Jamppa")
+
+        db.session.add(game_type)
+        db.session.add(game)
+        db.session.add(player)
+        db.session.commit()
+
+        url = SCORE_URL.replace("<game_token>", "test12345")
+        url = url.replace("<player_name>", "Jamppa")
+        response = self.client.get(url)
+
+        assert response.status_code == 404, response.status_code
+
     def testPutScoreEditScore(self):
         """
         Make a valid put request to change score value of a PlayerScore
