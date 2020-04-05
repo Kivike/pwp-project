@@ -47,6 +47,28 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 200, response.status_code
 
+    def testGetGametypeCollection(self):
+        response = self.client.get(COLLECTION_URL)
+
+        assert response.status_code == 200, response.status_code
+        assert response.data is not None
+        json_object = json.loads(response.data)
+        assert json_object is not None
+        assert len(json_object['items']) == 0
+
+
+        db.session.add(GameType(name="Chess"))
+        db.session.add(GameType(name="Bridge"))
+        db.session.commit()
+
+        response = self.client.get(COLLECTION_URL)
+
+        assert response.status_code == 200, response.status_code
+        assert response.data is not None
+        json_object = json.loads(response.data)
+        assert json_object is not None
+        assert len(json_object['items']) == 2, len(json_object['items'])
+
     def testPostGametype(self):
         """
         Test for successful gametype adding
