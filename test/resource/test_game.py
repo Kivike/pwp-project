@@ -115,6 +115,52 @@ class TestPlayer(unittest.TestCase):
         assert response.status_code == 201, response.status_code
         assert GameType.query.count() == 1
 
+    def testPostGameNoTypeInDB(self):
+        """
+        Test for when gametype is not found on server
+        """
+        game_type = GameType(name="Korona")
+        db.session.add(game_type)
+
+        db.session.commit()
+
+        game_data = {
+            "host": "Alice",
+            "game_type": "Korona",
+            "status": 0
+        }
+
+        response = self.client.post(
+            COLLECTION_URL,
+            data=json.dumps(game_data),
+            content_type='application/json'
+        )
+        assert response.status_code == 409, response.status_code
+        assert Game.query.count() == 0
+
+    def testPostGameNoHostInDB(self):
+        """
+        Test for when gametype is not found on server
+        """
+        host = Player(name="Alice")
+        db.session.add(host)
+
+        db.session.commit()
+
+        game_data = {
+            "host": "Alice",
+            "game_type": "Korona",
+            "status": 0
+        }
+
+        response = self.client.post(
+            COLLECTION_URL,
+            data=json.dumps(game_data),
+            content_type='application/json'
+        )
+        assert response.status_code == 409, response.status_code
+        assert Game.query.count() == 0
+
     def testPostGameWithName(self):
         """
         Test for successfull game add with specified name
@@ -304,6 +350,41 @@ class TestPlayer(unittest.TestCase):
         db.session.add(game_type)
 
         game = Game(host=host, game_type=game_type, game_token="test123")
+        db.session.add(game)
+        db.session.commit()
+
+        url = ITEM_URL.replace("<game_token>", "test123")
+
+        put_data = {
+            "host" : host.name,
+            "game_type": game_type.name,
+            "name": "test123",
+            "status": 1
+        }
+
+        response = self.client.put(
+            url,
+            data=json.dumps(put_data),
+            content_type="application/json"
+        )
+
+        assert response.status_code == 201, response.status_code
+        game = Game.query.first()
+
+        assert game.finished_at is None, game.finished_at
+
+    def testPutGameRestartGame(self):
+        """
+        Test seeing if finished_at is removed from game if its status is
+        changed back to active (1)
+        """
+        host = Player(name="Alice")
+        db.session.add(host)
+
+        game_type = GameType(name="Korona")
+        db.session.add(game_type)
+
+        game = Game(host=host, game_type=game_type, game_token="test123", status=0, finished_at=datetime.now())
         db.session.add(game)
         db.session.commit()
 
