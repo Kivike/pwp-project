@@ -292,6 +292,60 @@ class TestScore(unittest.TestCase):
         )
         assert response.status_code == 409, response.status_code
 
+    def testPutScoreInvalidSchema(self):
+        game_type = GameType(name="Uno")
+        game = Game(game_token="test12345", game_type=game_type)
+        player = Player(name="Jamppa")
+        score = PlayerScore(game=game, player=player)
+
+        db.session.add(game_type)
+        db.session.add(game)
+        db.session.add(player)
+        db.session.add(score)
+        db.session.commit()
+
+        put_data = {
+            "color": "green"
+        }
+
+        url = SCORE_URL.replace("<game_token>", "test12345")
+        url = url.replace("<player_name>", "Jamppa")
+
+        response = self.client.put(
+            url,
+            data=json.dumps(put_data),
+            content_type="application/json"
+        )
+
+        assert response.status_code == 400, response.status_code
+
+    def testPutScoreMissingContentType(self):
+        game_type = GameType(name="Uno")
+        game = Game(game_token="test12345", game_type=game_type)
+        player = Player(name="Jamppa")
+        score = PlayerScore(game=game, player=player)
+
+        db.session.add(game_type)
+        db.session.add(game)
+        db.session.add(player)
+        db.session.add(score)
+        db.session.commit()
+
+        put_data = {
+            "player": "Jamppa",
+            "score": 50
+        }
+
+        url = SCORE_URL.replace("<game_token>", "test12345")
+        url = url.replace("<player_name>", "Jamppa")
+
+        response = self.client.put(
+            url,
+            data=json.dumps(put_data)
+        )
+
+        assert response.status_code == 415, response.status_code
+
     def testDeleteExistingPlayerScore(self):
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
