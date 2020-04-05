@@ -19,7 +19,7 @@ class GameCollection(Resource):
     def get(self):
         items = []
         games = Game.query.all()
-        
+
         for db_game in games:
             name = db_game.game_token
             status = db_game.status
@@ -235,9 +235,6 @@ class GameResource(Resource):
         return Response(status=201, headers={
             "Location": url_for("gameresource", game_name=db_game.game_token)
         })
-
-
-
         
     #Delete a game
     def delete(self, game_name):

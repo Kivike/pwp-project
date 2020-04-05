@@ -1,6 +1,8 @@
 import unittest
 from sqlalchemy import exc
 from sqlalchemy import orm
+from sqlalchemy.sql import func
+from datetime import datetime
 
 from src.app import create_app, db
 from src.orm_models import Game, Player, GameType
@@ -40,8 +42,12 @@ class TestPlayer(unittest.TestCase):
         game_type = GameType(name="Korona")
         db.session.add(game_type)
 
-        game = Game(host=host, game_type=game_type, game_token="test123")
-        db.session.add(game)
+        db.session.add(Game(
+            host=host,
+            game_type=game_type,
+            game_token="test123",
+            finished_at=func.now()
+        ))
         db.session.commit()
 
         url = ITEM_URL.replace('<game_token>', "test123")
@@ -49,10 +55,7 @@ class TestPlayer(unittest.TestCase):
 
         assert response.status_code == 200, response.status_code
 
-    def testGetGameCollection(self):
-        """
-        Test for successfully retrieving a collection of games
-        """
+    def testGetEmptyGameCollection(self):
         response = self.client.get(COLLECTION_URL)
 
         assert response.status_code == 200, response.status_code
@@ -61,12 +64,21 @@ class TestPlayer(unittest.TestCase):
         assert json_object is not None
         assert len(json_object['items']) == 0
 
+    def testGetGameCollection(self):
+        """
+        Test for successfully retrieving a collection of games
+        """
         host = Player(name="Alice")
         db.session.add(host)
         game_type = GameType(name="Korona")
         db.session.add(game_type)
 
-        db.session.add(Game(host=host, game_type=game_type, game_token="test123"))
+        db.session.add(Game(
+            host=host,
+            game_type=game_type,
+            game_token="test123",
+            finished_at=func.now()
+        ))
         db.session.add(Game(host=host, game_type=game_type, game_token="test1234"))
         db.session.commit()
 
@@ -178,7 +190,7 @@ class TestPlayer(unittest.TestCase):
         assert response.status_code == 415, response.status_code
         assert Game.query.count() == 0
 
-    def testPutGameValidRename(self):
+    def testPutGameValid(self):
         """
         Test for successfully renaming a game
         """
@@ -192,21 +204,26 @@ class TestPlayer(unittest.TestCase):
         db.session.add(game_type)
         db.session.add(game_type_alter)
 
-        game = Game(host=host, game_type=game_type, game_token="test123")
+        game = Game(
+            host=host,
+            game_type=game_type,
+            game_token="test123"
+        )
         db.session.add(game)
         db.session.commit()
 
         url = ITEM_URL.replace("<game_token>", "test123")
 
-        alter_data = {
+        put_data = {
             "host" : host_alter.name,
             "game_type": game_type_alter.name,
-            "name": "test999"
+            "name": "test999",
+            "status": 0
         }
 
         response = self.client.put(
             url,
-            data=json.dumps(alter_data),
+            data=json.dumps(put_data),
             content_type="application/json"
         )
 
@@ -216,7 +233,39 @@ class TestPlayer(unittest.TestCase):
         assert game.game_token == "test999", game.game_token
         assert game.host == host_alter, game.host
         assert game.game_type == game_type_alter, game.game_type
+        assert game.finished_at is not None
     
+    def testPutGameFinishedAt(self):
+        host = Player(name="Alice")
+        db.session.add(host)
+
+        game_type = GameType(name="Korona")
+        db.session.add(game_type)
+
+        game = Game(host=host, game_type=game_type, game_token="test123")
+        db.session.add(game)
+        db.session.commit()
+
+        url = ITEM_URL.replace("<game_token>", "test123")
+
+        put_data = {
+            "host" : host.name,
+            "game_type": game_type.name,
+            "name": "test123",
+            "status": 1
+        }
+
+        response = self.client.put(
+            url,
+            data=json.dumps(put_data),
+            content_type="application/json"
+        )
+
+        assert response.status_code == 201, response.status_code
+        game = Game.query.first()
+
+        assert game.finished_at is None, game.finished_at
+
     def testPutNonExistingGame(self):
         host = Player(name="Alice")
         db.session.add(host)
