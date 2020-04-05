@@ -7,7 +7,7 @@ import datetime
 the root folder of the project with 'python -m src.example' '''
 
 #Setup the database
-app = create_app('dev')
+app = create_app('development')
 app_context = app.app_context()
 app_context.push()
 
