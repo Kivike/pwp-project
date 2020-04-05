@@ -29,11 +29,21 @@ Example.py in src-folder creates an example populated database. If you run examp
 
 The same database that example.py creates can be found in the db-folder with the name deliverable2.db
 
-### Test running the application
 
-If you want to test running the application (well, there is no functionality yet obviously), run __in the root directory of the project__:
+### Running the application
+
+If you want to run the application, run __in the root directory of the project__:
 
 ``` flask run ```
+
+Run environment can be set with FLASK_ENV environmental variable. If the value isn't set, dev mode is used.
+Available modes:
+- __development__ (database is permanently stored in file db/test.db)
+- __production__ (database is permanently stored in file db/gamescores.db)
+- __test__ (database is temporarily stored in memory)
+
+To run the app in production mode:
+``` FLASK_ENV=live flask run ```
 
 ### Run the tests on the database
 
