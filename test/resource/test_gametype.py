@@ -11,7 +11,7 @@ import random
 ITEM_URL = "/api/gametypes/<gametype_name>/"
 COLLECTION_URL = "/api/gametypes/"
 
-class TestPlayer(unittest.TestCase):
+class TestGametype(unittest.TestCase):
 
     def setUp(self):
         self.app = create_app('test')
