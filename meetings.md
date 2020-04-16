@@ -56,14 +56,20 @@ Apiary documentation looks okay.
 *ONLY USED BY COURSE STAFF: Additional comments from the course staff*
 
 ## Meeting 4.
-* **DATE:**
-* **ASSISTANTS:**
+* **DATE:** 15.4.2020
+* **ASSISTANTS:** Iván Sánchez Milara
 
 ### Minutes
-*Summary of what was discussed during the meeting*
+In router.py there should be a comment about leaderboard and tournament resources not being implemented for clarity. To get full points for the deliverable, more comments are needed in tests as well as some in the resource files. 
+
+We encountered one instance during the meeting where the documentation in Apiary did not completely match the implementation. The documentation in Apiary should be checked for mistakes. 
+
+Overall, the situation with the implementation is good. 
 
 ### Action points
-*List here the actions points discussed with assistants*
+
+1. Check Apiary documentation for impactful mistakes. 
+2. Comment in router.py that leaderboard and tournament resources are not implemented. If we have time, more comments in tests and resource files. 
 
 
 ### Comments from staff
