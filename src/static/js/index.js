@@ -1,24 +1,24 @@
 let ENTRY_POINT = 'http://127.0.0.1:5000/api/'
 
-let headerElem = null
-let controlsElem = null
-let contentElem = null
-
 import renderAllPlayers from './players.js'
 import renderNewGame from './newgame.js'
 import { getResource, followLink } from './api.js'
+import { setTitle, getControlsElem } from './utils.js'
 
-console.log(followLink)
 function renderIndex(response) {
-    controlsElem.empty();
+    let controlsElem = $('.controls')
     setTitle('Game Score API')
 
     let controls = response['@controls'];
 
-    let allPlayersBtn = '<button><a href="' + controls['gamescr:all-players']['href'] +
-        '" onClick="followLink(event, this, renderAllPlayers)">All Players</a></button>';
+    const allPlayerHref = controls['gamescr:all-players']['href']
+    let allPlayersLink = $('<a href="' + allPlayerHref + '" >All Players</a>');
 
-    controlsElem.html(allPlayersBtn);
+    allPlayersLink.click(function(event) {
+        followLink(event, this, renderAllPlayers);
+    })
+
+    getControlsElem().append($('<button>').append(allPlayersLink));
 
     getResource(controls['gamescr:all-games']['href'], renderAllGames);
 }
@@ -26,26 +26,16 @@ function renderIndex(response) {
 function renderAllGames(response) {
     let controls = response['@controls']
 
-    controlsElem.append('<button><a href="' + controls['gamescr:add-game']['href'] +
-        '" onClick="_followLink(event, this, renderNewGame)">New Game</a></button>');
+    const newGameHref = controls['gamescr:add-game']['href']
+    let newGameLink = $('<a href="' + newGameHref + '">New game</a>')
+    newGameLink.click(function(event) {
+        console.log(event)
+        followLink(event, this, renderNewGame)
+    });
+    getControlsElem().append($('<button>').append(newGameLink));
 }
 
-function _followLink(event, a, b) {
-    event.preventDefault();
-    console.log('AA')
-    followLink(event, a, b)
-}
-function setTitle(title) {
-    headerElem.html('<h3>' + title + '</h3>')
-}
-function renderError(response) {
-    console.error(response);
-}
 
 $(document).ready(function () {
-    headerElem = $('.header')
-    controlsElem = $('.controls')
-    contentElem = $('.contents')
-
     getResource(ENTRY_POINT, renderIndex)
 });

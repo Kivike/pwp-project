@@ -1,8 +1,12 @@
 import { getResource, deleteResource } from './api.js'
+import { setTitle, getReturnButton, getControlsElem, getContentsElem } from './utils.js'
+import { submitForm, renderControlForm } from './form.js'
 
-function renderAllPlayers(response) {
+function renderAllPlayers(response, s, a) {
     setTitle('Players')
-    controlsElem.html(getReturnButton())
+    getControlsElem().html(getReturnButton())
+
+    let contentElem = getContentsElem()
     contentElem.empty()
 
     console.log(response);
@@ -45,11 +49,6 @@ function renderAllPlayers(response) {
     playerTable.append(ptBody)
     playerList.append(playerTable)
     contentElem.append(playerList)
-}
-
-function getReturnButton() {
-    let button = '<button><a href="/">Return to menu</a>';
-    return button
 }
 
 export default renderAllPlayers

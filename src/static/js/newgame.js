@@ -1,12 +1,12 @@
+import { getResource } from './api.js'
+import { setTitle, getReturnButton, getControlsElem, getContentsElem } from './utils.js'
+import { submitForm, renderControlForm } from './form.js'
+
 function renderNewGame(response) {
     setTitle('New Game')
-    controlsElem.html(getReturnButton())
-
-    console.log(response)
+    getControlsElem().html(getReturnButton())
 
     let control = response['@controls']['gamescr:add-game']
-    console.log('ADG')
-    console.log(control)
     let props = control.schema.properties
     let nameProp = props.name
     let formIdGame = "game"
@@ -43,35 +43,36 @@ function renderNewGame(response) {
     form.append('<button type="submit">Submit</button>')
     form.attr('action', control.href)
     form.attr('method', control.method)
-    form.submit(function(event) {
-        let submitGame = function() {
-            submitForm(event, $('form.form-new-game'), control.schema, function(res) {
-                if (res.status === 201) {
-                    form.find('input,select').each(function() {
-                        let el = $(this)
-                        el.val("")
-                    });
-                }
-            });
-        }
-        event.preventDefault();
-        console.log(addGametypeControl)
-        if (gametypeSelect.children("option:selected").val() === "new") {
-            let newGametypeName = $('#gamescr-field-gametype-name').val()
+    form.submit(submitNewGame)
+    getContentsElem().html(form)
+}
 
-            submitForm(event, $('form.form-add-gametype'), addGametypeControl.schema, function(data, status, res) {
-                if (res.status === 201) {
-                    gametypeSelect.val(newGametypeName)
+function submitNewGame(event) {
+    let submitGame = function() {
+        submitForm(event, $('form.form-new-game'), control.schema, function(res) {
+            if (res.status === 201) {
+                form.find('input,select').each(function() {
+                    let el = $(this)
+                    el.val("")
+                });
+            }
+        });
+    }
+    event.preventDefault();
+    console.log(addGametypeControl)
+    if (gametypeSelect.children("option:selected").val() === "new") {
+        let newGametypeName = $('#gamescr-field-gametype-name').val()
 
-                    submitGame();
-                }
-            });
-        } else {
-            submitGame();
-        }
+        submitForm(event, $('form.form-add-gametype'), addGametypeControl.schema, function(data, status, res) {
+            if (res.status === 201) {
+                gametypeSelect.val(newGametypeName)
 
-    })
-    contentElem.html(form)
+                submitGame();
+            }
+        });
+    } else {
+        submitGame();
+    }
 }
 
 function renderHostSelect(control) {
@@ -86,11 +87,6 @@ function renderHostSelect(control) {
         })
     });
     return hostSelectContainer;
-}
-
-function getReturnButton() {
-    let button = '<button><a href="/">Return to menu</a>';
-    return button
 }
 
 export { renderNewGame as default }

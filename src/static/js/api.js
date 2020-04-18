@@ -30,9 +30,9 @@ function sendData(href, method, data, callback) {
     });
 }
 
-function followLink(event, a, renderer) {
+function followLink(event, a, callback) {
     event.preventDefault();
-    getResource($(a).attr("href"), renderer);
+    getResource($(a).attr("href"), callback);
 }
 
 export { getResource, deleteResource, sendData, followLink }
