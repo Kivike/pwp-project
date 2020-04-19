@@ -50,11 +50,11 @@ function renderAllGames(response) {
 
         let a = $('<a href="' + gameHref + '"><button>Access</button></a>');
 
-        console.log(a.html())
         a.click(function(event) {
             followLink(event, this, renderGame)
         });
-        row.append('<td>').append(a)
+        row.append(a)
+        a.wrap('<td>')
         ptBody.append(row);
     });
 }

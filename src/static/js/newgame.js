@@ -75,19 +75,19 @@ function renderGametypeSelect(gametypeData, formIdGame) {
     gametypeContainer.append(addGametypeForm)
 
     gametypeSelect.change(function() {
-        let value = $(this).val();
-        
-        if (value === 'new') {
+        if ($(this).val() === 'new') {
             addGametypeForm.show();
         } else {
             addGametypeForm.hide();
         }
-    })
+    });
 
     return gametypeContainer;
 }
 
 /**
+ * Submit new gametype if not using existing one, and then submit game
+ * Switch to page of created game on success
  * 
  * @param {Object} event 
  * @param {Object} addGameControl 
@@ -98,9 +98,10 @@ function submitNewGame(event, addGameControl, addGametypeControl) {
 
     let submitGame = function() {
         submitForm(event, $('form.form-new-game'), addGameControl.schema, function(resData, status, res) {
-            console.log(res);
             if (res.status === 201) {
                 getResource(res.getResponseHeader('location'), renderGame);
+            } else {
+                ///TODO handle error
             }
         });
     }
