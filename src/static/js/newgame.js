@@ -1,7 +1,7 @@
 import { getResource } from './api.js'
 import { setTitle, getReturnButton, getControlsElem, getContentsElem } from './utils.js'
 import { submitForm, renderControlForm } from './form.js'
-
+import renderGame from './game.js'
 /**
  * Render page for new game
  * @param {Object} data 
@@ -100,7 +100,7 @@ function submitNewGame(event, addGameControl, addGametypeControl) {
         submitForm(event, $('form.form-new-game'), addGameControl.schema, function(resData, status, res) {
             console.log(res);
             if (res.status === 201) {
-                document.location.href = $('#return-link').attr('href')
+                getResource(res.getResponseHeader('location'), renderGame);
             }
         });
     }
