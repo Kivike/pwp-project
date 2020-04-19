@@ -97,12 +97,10 @@ function submitNewGame(event, addGameControl, addGametypeControl) {
     event.preventDefault();
 
     let submitGame = function() {
-        submitForm(event, $('form.form-new-game'), addGameControl.schema, function(res) {
+        submitForm(event, $('form.form-new-game'), addGameControl.schema, function(resData, status, res) {
+            console.log(res);
             if (res.status === 201) {
-                form.find('input,select').each(function() {
-                    let el = $(this)
-                    el.val("")
-                });
+                document.location.href = $('#return-link').attr('href')
             }
         });
     }

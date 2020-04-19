@@ -21,7 +21,7 @@ function setTitle(title) {
  * Get button that returns to index menu
  */
 function getReturnButton() {
-    let button = '<button><a href="/">Return to menu</a>';
+    let button = '<button><a id="return-link" href="/">Return to menu</a></button>';
     return button
 }
 

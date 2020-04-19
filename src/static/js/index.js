@@ -40,7 +40,7 @@ function renderAllGames(response) {
     let ptBody = $('<tbody>')
     gameTable.append(ptBody)
 
-    getContentsElem().append('<div>').append('<h4>All players</h4>').append(gameTable)
+    getContentsElem().append('<div>').append('<h4>Existing games</h4>').append(gameTable)
 
     response.items.forEach(function(item) {
         let gameHref = item['@controls'].self.href;
