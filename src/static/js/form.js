@@ -20,8 +20,7 @@ function renderControlForm(control, formId, requiredOnly = false, addSubmitButto
             return;
         }
         const prop = props[propName]
-        let inputDiv = $('<div>')
-        console.log(control)
+        let inputDiv = $('<div>', { class: 'form-group' })
         const inputId = "gamescr-field-" + formId + '-' + propName
         inputDiv.append('<label for="' + inputId + '">' + prop.description + ':</label>')
         inputDiv.append('<input class="field-' + formId + '" id="' + inputId + '" gamescr-field="' + propName + '"></input>')

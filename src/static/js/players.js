@@ -19,10 +19,14 @@ function renderAllPlayers(response, s, a) {
 
     let playerList = $('<div>')
     playerList.append('<h4>All players</h4>')
+
     let playerTable = $('<table>')
-    playerTable.append('<thead><tr><th scope="col">Name<th><th scope="col"></th></tr></thead>')
+        .append('<thead><tr><th scope="col">Name<th><th scope="col"></th></tr></thead>')
 
     let ptBody = $('<tbody>')
+    playerTable.append(ptBody)
+
+    contentElem.append($('<div>')).append('<h4>All players</h4>').append(playerTable)
 
     response.items.forEach(function(item) {
         getResource(item['@controls'].self.href, function(response) {
@@ -46,9 +50,6 @@ function renderAllPlayers(response, s, a) {
             ptBody.append(row);
         });
     });
-    playerTable.append(ptBody)
-    playerList.append(playerTable)
-    contentElem.append(playerList)
 }
 
 export default renderAllPlayers

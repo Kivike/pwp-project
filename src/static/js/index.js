@@ -2,8 +2,10 @@ let ENTRY_POINT = 'http://127.0.0.1:5000/api/'
 
 import renderAllPlayers from './players.js'
 import renderNewGame from './newgame.js'
+import renderGame from './game.js'
+
 import { getResource, followLink } from './api.js'
-import { setTitle, getControlsElem } from './utils.js'
+import { setTitle, getControlsElem, getContentsElem } from './utils.js'
 
 function renderIndex(response) {
     let controlsElem = $('.controls')
@@ -33,6 +35,29 @@ function renderAllGames(response) {
         followLink(event, this, renderNewGame)
     });
     getControlsElem().append($('<button>').append(newGameLink));
+
+    let gameTable = $('<table>').append('<thead><tr><th scope="col">Name<th><th scope="col"></th></tr></thead>')
+
+    let ptBody = $('<tbody>')
+    gameTable.append(ptBody)
+
+    getContentsElem().append('<div>').append('<h4>All players</h4>').append(gameTable)
+
+    response.items.forEach(function(item) {
+        let gameHref = item['@controls'].self.href;
+
+        let row = $('<tr>')
+        row.append('<td>' + item.name + '</td>');
+
+        let a = $('<a href="' + gameHref + '"><button>Access</button></a>');
+
+        console.log(a.html())
+        a.click(function(event) {
+            followLink(event, this, renderGame)
+        });
+        row.append('<td>').append(a)
+        ptBody.append(row);
+    });
 }
 
 
