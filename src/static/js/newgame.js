@@ -2,6 +2,10 @@ import { getResource } from './api.js'
 import { setTitle, getReturnButton, getControlsElem, getContentsElem } from './utils.js'
 import { submitForm, renderControlForm } from './form.js'
 
+/**
+ * Render page for new game
+ * @param {Object} data 
+ */
 function renderNewGame(data) {
     setTitle('New Game')
     getControlsElem().html(getReturnButton())
@@ -41,6 +45,12 @@ function renderNewGame(data) {
     getContentsElem().html(form)
 }
 
+/**
+ * Render form for selecting gametype, and adding new gametype if 'new' gametype is selected
+ * 
+ * @param {Object} gametypeData 
+ * @param {String} formIdGame ID of the main game form
+ */
 function renderGametypeSelect(gametypeData, formIdGame) {
     let gametypeContainer = $('<div/>')
 
