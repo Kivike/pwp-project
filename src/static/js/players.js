@@ -1,24 +1,52 @@
 import { getResource, deleteResource } from './api.js'
 import { setTitle, getReturnButton, getControlsElem, getContentsElem } from './utils.js'
-import { submitForm, renderControlForm } from './form.js'
+import { renderControlForm } from './form.js'
 
-function renderAllPlayers(response, s, a) {
+/**
+ * Render player list page
+ * 
+ * @param {Object} data
+ */
+function renderAllPlayers(data) {
     setTitle('Players')
     getControlsElem().html(getReturnButton())
 
     let contentElem = getContentsElem()
-    contentElem.empty()
+    contentElem.html(renderAddPlayerForm(data))
 
-    console.log(response);
-    let addPlayerControl = response['@controls']['gamescr:add-player']
+    renderPlayersTable(data, function(result) {
+        console.log(result);
+        contentElem.append(result);
+    });
+}
+
+/**
+ * Render form for creating a new player
+ * 
+ * @param {Object} playersData 
+ */
+function renderAddPlayerForm(playersData) {
+    let addPlayerContainer = $('<div>')
+    let addPlayerControl = playersData['@controls']['gamescr:add-player']
 
     let addPlayerForm = renderControlForm(addPlayerControl, "player")
     addPlayerForm.addClass("new-player")
-    contentElem.append('<h4>' + addPlayerControl.title + '</h4>')
-    contentElem.append(addPlayerForm)
+    addPlayerContainer.append('<h4>' + addPlayerControl.title + '</h4>')
+    addPlayerContainer.append(addPlayerForm);
 
-    let playerList = $('<div>')
-    playerList.append('<h4>All players</h4>')
+    return addPlayerContainer;
+}
+
+/**
+ * Render table of all players
+ * Calls the callback once rendering is done
+ * 
+ * @param {Object} playersData 
+ * @param {Function} callback 
+ */
+function renderPlayersTable(playersData, callback) {
+    let playersTableContainer = $('<div/>');
+    playersTableContainer.append('<h4>All players</h4>')
 
     let playerTable = $('<table>')
         .append('<thead><tr><th scope="col">Name<th><th scope="col"></th></tr></thead>')
@@ -26,13 +54,12 @@ function renderAllPlayers(response, s, a) {
     let ptBody = $('<tbody>')
     playerTable.append(ptBody)
 
-    contentElem.append($('<div>')).append('<h4>All players</h4>').append(playerTable)
+    playersTableContainer.append(playerTable)
 
-    response.items.forEach(function(item) {
-        getResource(item['@controls'].self.href, function(response) {
-            let playerControls = response['@controls']
+    playersData.items.forEach(function(item, i) {
+        getResource(item['@controls'].self.href, function(data) {
+            let playerControls = data['@controls']
             let deleteHref = playerControls['gamescr:delete'].href
-            console.log(deleteHref);
 
             let row = $('<tr>')
             row.append('<td>' + item.name + '</td>');
@@ -48,8 +75,15 @@ function renderAllPlayers(response, s, a) {
             });
             row.append(a)
             ptBody.append(row);
+
+            console.log(i);
+            console.log(playersData.items.length);
+
+            if (i === playersData.items.length - 1) {
+                // Last item rendered
+                callback(playersTableContainer);
+            }
         });
     });
 }
-
 export default renderAllPlayers

@@ -1,8 +1,14 @@
 import { sendData } from './api.js'
 
+/**
+ * Render a form based on Mason control
+ * 
+ * @param {Object} control 
+ * @param {String} formId 
+ * @param {Boolean} requiredOnly Only include required fields?
+ * @param {Boolean} addSubmitButton Add submit button to end of form?
+ */
 function renderControlForm(control, formId, requiredOnly = false, addSubmitButton = true) {
-    let requiredFields = control.schema.required
-
     let form = $('<form></form>')
     form.attr('form-id', formId)
     form.attr('action', control.href)
@@ -33,6 +39,12 @@ function renderControlForm(control, formId, requiredOnly = false, addSubmitButto
     return form
 }
 
+/**
+ * @param {Object} event 
+ * @param {Object} form 
+ * @param {Object} schema 
+ * @param {Function} callback 
+ */
 function submitForm(event, form, schema, callback) {
     event.preventDefault()
 

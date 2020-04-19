@@ -1,5 +1,14 @@
 import { renderError } from './utils.js'
 
+/**
+ * Functions are originally taken from
+ * https://lovelace.oulu.fi/ohjelmoitava-web/programmable-web-project-spring-2020/exercise-4-implementing-hypermedia-clients/
+ */
+
+/**
+ * @param {String} href 
+ * @param {Function} callback 
+ */
 function getResource(href, callback) {
     console.log(href);
     $.ajax({
@@ -9,6 +18,10 @@ function getResource(href, callback) {
     });
 }
 
+/**
+ * @param {String}
+ * @param {Function} callback 
+ */
 function deleteResource(href, callback) {
     $.ajax({
         url: href,
@@ -18,6 +31,12 @@ function deleteResource(href, callback) {
     });
 }
 
+/**
+ * @param {String} href 
+ * @param {String} method 
+ * @param {Object} data 
+ * @param {Function} callback 
+ */
 function sendData(href, method, data, callback) {
     $.ajax({
         url: href,
@@ -30,6 +49,12 @@ function sendData(href, method, data, callback) {
     });
 }
 
+/**
+ * 
+ * @param {Object} event 
+ * @param {String} a 
+ * @param {Function} callback 
+ */
 function followLink(event, a, callback) {
     event.preventDefault();
     getResource($(a).attr("href"), callback);

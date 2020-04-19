@@ -8,7 +8,6 @@ import { getResource, followLink } from './api.js'
 import { setTitle, getControlsElem, getContentsElem } from './utils.js'
 
 function renderIndex(response) {
-    let controlsElem = $('.controls')
     setTitle('Game Score API')
 
     let controls = response['@controls'];
@@ -59,7 +58,6 @@ function renderAllGames(response) {
         ptBody.append(row);
     });
 }
-
 
 $(document).ready(function () {
     getResource(ENTRY_POINT, renderIndex)

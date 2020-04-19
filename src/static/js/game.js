@@ -48,6 +48,7 @@ function endGame(event, gameData) {
         console.log(res);
     });
 }
+
 function renderScoreboad(gameData)
 {
     const addScoreControl = gameData['@controls']['gamescr:add-score'];

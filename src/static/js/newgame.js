@@ -77,9 +77,14 @@ function renderGametypeSelect(gametypeData, formIdGame) {
     return gametypeContainer;
 }
 
+/**
+ * 
+ * @param {Object} event 
+ * @param {Object} addGameControl 
+ * @param {Object} addGametypeControl 
+ */
 function submitNewGame(event, addGameControl, addGametypeControl) {
     event.preventDefault();
-
 
     let submitGame = function() {
         submitForm(event, $('form.form-new-game'), addGameControl.schema, function(res) {
@@ -98,17 +103,32 @@ function submitNewGame(event, addGameControl, addGametypeControl) {
     }
 }
 
-function submitGametype(addGametypeControl, callback) {
+/**
+ * Submit new gametype
+ * Calls callback success/error depending on the response
+ * 
+ * @param {Object} addGametypeControl 
+ * @param {Function} success 
+ * @param {Function} error
+ */
+function submitGametype(addGametypeControl, callback, error) {
     let newGametypeName = $('#gamescr-field-gametype-name').val()
 
     submitForm(event, $('form.form-add-gametype'), addGametypeControl.schema, function(data, status, res) {
         if (res.status === 201) {
             $('select#gametype-select').val(newGametypeName)
             callback();
+        } else {
+            error();
         }
     });
 }
 
+/**
+ * Render selection for host player of the game
+ * 
+ * @param {Object} control 
+ */
 function renderHostSelect(control) {
     let hostSelect = $('<select gamescr-field="host" id="host-select">')
     let hostSelectContainer = $('<div>').append('<label for="host-select">Host name:</label>').append(hostSelect)
