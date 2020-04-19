@@ -1,3 +1,18 @@
 body {
     margin: 30px;
 }
+
+button {
+    margin: 5px;
+}
+
+h3 {
+    margin: 8px;
+}
+h4 {
+    margin: 5px;
+}
+
+label {
+    margin-right: 5px;
+}
