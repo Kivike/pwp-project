@@ -50,7 +50,6 @@ function sendData(href, method, data, callback) {
 }
 
 /**
- * 
  * @param {Object} event 
  * @param {String} a 
  * @param {Function} callback 

@@ -8,15 +8,13 @@ import { sendData } from './api.js'
  * @param {Boolean} requiredOnly Only include required fields?
  * @param {Boolean} addSubmitButton Add submit button to end of form?
  */
-function renderControlForm(control, formId, requiredOnly = false, addSubmitButton = true) {
+function renderControlForm(control, formId, submitCallback, requiredOnly = false, addSubmitButton = true) {
     let form = $('<form></form>')
     form.attr('form-id', formId)
     form.attr('action', control.href)
     form.attr('method', control.method)
     form.submit(function(event) {
-        submitForm(event, $('form.new-player'), control.schema, function(res) {
-            console.log(res);
-        });
+        submitForm(event, $('form.new-player'), control.schema, submitCallback);
     });
 
     const props = control['schema']['properties']

@@ -2,12 +2,12 @@ import { getResource, sendData } from './api.js'
 import { getReturnButton, getContentsElem, getControlsElem, setTitle } from './utils.js'
 
 function renderGame(data) {
+    setTitle(data.name);
+
     getControlsElem().html(getReturnButton())
 
     let contents = getContentsElem();
     contents.empty();
-
-    setTitle(data.name);
 
     contents.append($('<div/>', {
         class: 'game-type',

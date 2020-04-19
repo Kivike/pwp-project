@@ -15,7 +15,6 @@ function renderAllPlayers(data) {
     contentElem.html(renderAddPlayerForm(data))
 
     renderPlayersTable(data, function(result) {
-        console.log(result);
         contentElem.append(result);
     });
 }
@@ -29,7 +28,9 @@ function renderAddPlayerForm(playersData) {
     let addPlayerContainer = $('<div>')
     let addPlayerControl = playersData['@controls']['gamescr:add-player']
 
-    let addPlayerForm = renderControlForm(addPlayerControl, "player")
+    let addPlayerForm = renderControlForm(addPlayerControl, "player", function() {
+        getResource(playersData['@controls'].self.href, renderAllPlayers);
+    });
     addPlayerForm.addClass("new-player")
     addPlayerContainer.append('<h4>' + addPlayerControl.title + '</h4>')
     addPlayerContainer.append(addPlayerForm);
@@ -64,9 +65,7 @@ function renderPlayersTable(playersData, callback) {
             let row = $('<tr>')
             row.append('<td>' + item.name + '</td>');
 
-            let a = $('<td><a><button>Delete</button></a></td>');
-            console.log(a.html())
-            a.click(function() {
+            let a = $('<td><a><button>Delete</button></a></td>').click(function() {
                 deleteResource(deleteHref, function(resData, status, res) {
                     if (res.status === 204) {
                         row.remove();
@@ -75,9 +74,6 @@ function renderPlayersTable(playersData, callback) {
             });
             row.append(a)
             ptBody.append(row);
-
-            console.log(i);
-            console.log(playersData.items.length);
 
             if (i === playersData.items.length - 1) {
                 // Last item rendered

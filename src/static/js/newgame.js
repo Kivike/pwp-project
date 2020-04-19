@@ -68,7 +68,7 @@ function renderGametypeSelect(gametypeData, formIdGame) {
     });
 
     let addGametypeControl = gametypeData['@controls']['gamescr:add-gametype']
-    let addGametypeForm = renderControlForm(addGametypeControl, "gametype", false, false)
+    let addGametypeForm = renderControlForm(addGametypeControl, "gametype", null, false, false)
     addGametypeForm.attr('action', addGametypeControl.href)
     addGametypeForm.attr('method', addGametypeControl.method)
     addGametypeForm.addClass("form-add-gametype")
@@ -145,9 +145,7 @@ function renderHostSelect(control) {
 
     getResource(control.href, function(response) {
         response.items.forEach(function(item) {
-            console.log(item);
             hostSelect.append('<option>' + item.name + '</option>');
-            console.log(hostSelect)
         })
     });
     return hostSelectContainer;
