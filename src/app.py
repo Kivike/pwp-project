@@ -22,6 +22,5 @@ def create_app(config_name):
     #Fix mimetype issue
     mimetypes.add_type('text/javascript', '.js')
 
-
     return app
     

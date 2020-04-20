@@ -1,4 +1,4 @@
-let ENTRY_POINT = 'http://127.0.0.1:5000/api/'
+let ENTRY_POINT = '/api/'
 
 import $ from './jquery.js';
 
