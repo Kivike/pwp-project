@@ -49,7 +49,7 @@ function renderPlayersTable(playersData, callback) {
     let playersTableContainer = $('<div/>');
     playersTableContainer.append('<h4>All players</h4>')
 
-    let playerTable = $('<table>')
+    let playerTable = $('<table class="table">')
         .append('<thead><tr><th scope="col">Name<th><th scope="col"></th></tr></thead>')
 
     let ptBody = $('<tbody>')

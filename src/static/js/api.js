@@ -35,17 +35,21 @@ function deleteResource(href, callback) {
  * @param {String} href 
  * @param {String} method 
  * @param {Object} data 
- * @param {Function} callback 
+ * @param {Function} success
+ * @param {Function} error 
  */
-function sendData(href, method, data, callback) {
+function sendData(href, method, data, success, error) {
     $.ajax({
         url: href,
         type: method,
         data: JSON.stringify(data),
         contentType: "application/json",
         processData: false,
-        success: callback,
-        error: renderError
+        success: success,
+        error: function(data) {
+            renderError(data);
+            if (error) error(data);
+        }
     });
 }
 

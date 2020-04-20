@@ -2,11 +2,19 @@
 /**
  * @param {Object} data 
  */
-function renderError(data) {
-    //TODO show in error block
-    console.error(data);
+function renderError(error) {
+    if ("string" === typeof error) {
+        $('.error').html(error);
+    } else {
+        if (error.responseJSON) {
+            $('.error').html(error.responseJSON['@error']['@message']);
+        }
+    }
 }
 
+function resetErrors() {
+    $('.error').empty()
+}
 /**
  * Set page title
  * 
@@ -38,4 +46,4 @@ function getContentsElem() {
 function getControlsElem() {
     return $('.controls')
 }
-export { renderError, setTitle, getReturnButton, getContentsElem, getControlsElem }
+export { renderError, resetErrors, setTitle, getReturnButton, getContentsElem, getControlsElem }

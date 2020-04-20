@@ -1,4 +1,5 @@
 import { sendData } from './api.js'
+import { renderError, resetErrors } from './utils.js'
 
 /**
  * Render a form based on Mason control
@@ -45,6 +46,7 @@ function renderControlForm(control, formId, submitCallback, requiredOnly = false
  */
 function submitForm(event, form, schema, callback) {
     event.preventDefault()
+    resetErrors();
 
     let formData = {}
 
@@ -57,18 +59,19 @@ function submitForm(event, form, schema, callback) {
 
         let prop = schema.properties[fieldName]
 
-        if (prop.type === "integer" && fieldValue) {
-            fieldValue = parseInt(fieldValue)
-        }
-
-        if (fieldValue) {
+        if (fieldValue !== '') {
+            if (prop.type === 'integer') {
+                fieldValue = parseInt(fieldValue);
+            } else if (prop.type === 'float') {
+                fieldValue = parseFloat(fieldValue);
+            }
             formData[fieldName] = fieldValue
         } else {
             if (schema.required.includes(fieldName)) {
                 renderError('Missing value for required field "' + fieldName + '"');
             }
         }
-        
+
         inputElem.val('')
     });
 

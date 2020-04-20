@@ -16,3 +16,19 @@ h4 {
 label {
     margin-right: 5px;
 }
+
+.error {
+    color: red;
+}
+
+.pending-change {
+    border: 2px solid orange;
+}
+
+td {
+    padding: 3px;
+}
+
+input.score {
+    width: 70px;
+}
