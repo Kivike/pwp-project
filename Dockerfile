@@ -16,6 +16,8 @@ RUN pip3 install -r requirements.txt
 COPY . /app
 
 RUN npm run build
-
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+RUN python3 -m flask init-db
 ENTRYPOINT [ "python3" ]
 CMD ["app.py"]
