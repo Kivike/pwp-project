@@ -37,6 +37,13 @@ In "production" environment, the command creates a database file called "gamesco
 
 ## Running the application
 
+### Using docker
+
+docker build -t pwp:latest .
+docker:run -d -p 5000:5000 pwp
+
+### Without docker
+
 Remember to setup the database before running the application.
 
 If you want to run the application, run __in the root directory of the project__:
