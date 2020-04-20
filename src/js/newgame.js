@@ -126,7 +126,10 @@ function submitGametype(addGametypeControl, callback, error) {
 
     submitForm(event, $('form.form-add-gametype'), addGametypeControl.schema, function(data, status, res) {
         if (res.status === 201) {
-            $('select#gametype-select').val(newGametypeName)
+            $('select#gametype-select').append($('<option>', {
+                value: newGametypeName
+            }));
+            $('select#gametype-select').val(newGametypeName);
             callback();
         } else {
             error();
