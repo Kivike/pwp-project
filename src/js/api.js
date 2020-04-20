@@ -1,3 +1,5 @@
+import $ from './jquery.js';
+
 import { renderError } from './utils.js'
 
 /**

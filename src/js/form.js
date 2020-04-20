@@ -1,3 +1,5 @@
+import $ from './jquery.js';
+
 import { sendData } from './api.js'
 import { renderError, resetErrors } from './utils.js'
 

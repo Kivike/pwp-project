@@ -1,3 +1,4 @@
+import $ from './jquery.js';
 import { getResource } from './api.js'
 import { setTitle, getReturnButton, getControlsElem, getContentsElem } from './utils.js'
 import { submitForm, renderControlForm } from './form.js'

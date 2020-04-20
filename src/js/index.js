@@ -1,11 +1,15 @@
 let ENTRY_POINT = 'http://127.0.0.1:5000/api/'
 
+import $ from './jquery.js';
+
 import renderAllPlayers from './players.js'
 import renderNewGame from './newgame.js'
 import renderGame from './game.js'
 
 import { getResource, followLink } from './api.js'
 import { setTitle, getControlsElem, getContentsElem } from './utils.js'
+
+
 
 function renderIndex(response) {
     setTitle('Game Score API')

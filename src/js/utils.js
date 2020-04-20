@@ -1,3 +1,4 @@
+import $ from './jquery.js';
 
 /**
  * @param {Object} data 

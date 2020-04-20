@@ -126,3 +126,6 @@ dmypy.json
 
 # Own additions
 *.db
+
+node_modules/
+src/static/js/bundle.js

@@ -1,7 +1,14 @@
+import $ from './jquery.js';
+
 import { getResource, sendData } from './api.js'
 import { getReturnButton, getContentsElem, getControlsElem, setTitle } from './utils.js'
 import { submitForm } from './form.js'
 
+/**
+ * Render game page
+ * 
+ * @param {Object} data 
+ */
 function renderGame(data) {
     setTitle(data.name);
 
