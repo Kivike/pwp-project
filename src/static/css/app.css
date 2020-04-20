@@ -24,6 +24,9 @@ label {
 .pending-change {
     border: 2px solid orange;
 }
+.pending-change::after {
+    content: 'Press enter to update';
+}
 
 td {
     padding: 3px;
@@ -31,4 +34,12 @@ td {
 
 input.score {
     width: 70px;
+}
+
+.required {
+    color: red;
+}
+
+.contents {
+    margin-top: 15px;
 }

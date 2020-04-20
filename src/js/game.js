@@ -28,15 +28,18 @@ function renderGame(data) {
     }));
 
     let statusDiv = $('<div/>', {class: 'game-status'});
-    let status = data.status == 0 ? 'active' : 'ended';
+    let statusText = data.status == 0 ? 'active' : 'inactive';
 
-    statusDiv.append('<span>Game is ' + status + '</span>')
+    console.log(data);
+    statusDiv.append('<span>Game is <strong>' + statusText + '</strong></span>')
 
-    let endGameBtn = $('<a>', {html: 'End game'}).click(function(event) {
-        endGame(event, data);
-    });
-    statusDiv.append(endGameBtn)
-    endGameBtn.wrap('<button/>')
+    if (data.status == 0) {
+        let endGameBtn = $('<a>', {html: 'End game'}).click(function(event) {
+            endGame(event, data);
+        });
+        statusDiv.append(endGameBtn);
+        endGameBtn.wrap('<button/>');
+    }
 
     contents.append(statusDiv);
 
@@ -50,10 +53,14 @@ function renderGame(data) {
 
 function endGame(event, gameData) {
     sendData(gameData['@controls'].self.href, 'PUT', {
-        'name': gameData.name,
-        'status': 1
-    }, function(res) {
-        console.log(res);
+        name: gameData.name,
+        game_type: gameData.game_type,
+        host: gameData.host,
+        status: 1
+    }, function(resData, status, response) {
+        if (response.status == 201) {
+            getResource(gameData['@controls'].self.href, renderGame);
+        }
     });
 }
 
@@ -67,8 +74,10 @@ function renderScores(gameData)
     let scoreContainer = $('<div class="score-container"/>');
     getContentsElem().append(scoreContainer);
 
-    let addScore = renderAddPlayerscore(gameData);
-    scoreContainer.append(addScore);
+    if (gameData.status == 0) {
+        let addScore = renderAddPlayerscore(gameData);
+        scoreContainer.append(addScore);
+    }
 
     renderScoreboard(gameData)
 }
@@ -107,7 +116,8 @@ function renderScoreboard(gameData) {
 
             let scoreInput = $('<input>', {
                 value: item.score,
-                class: 'score'
+                class: 'score',
+                disabled: gameData.status != 0
             }).change(function() {
                 let input = $(this);
                 
