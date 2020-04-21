@@ -61,13 +61,11 @@ function renderPlayersTable(playersData, callback) {
     playersData.items.forEach(function(item, i) {
         getResource(item['@controls'].self.href, function(data) {
             let playerControls = data['@controls']
-            let deleteHref = playerControls['gamescr:delete'].href
-
             let row = $('<tr>')
             row.append('<td>' + item.name + '</td>');
 
             let a = $('<td><a><button>Delete</button></a></td>').click(function() {
-                deleteResource(deleteHref, function(resData, status, res) {
+                deleteResource(playerControls['gamescr:delete'].href, function(resData, status, res) {
                     if (res.status === 204) {
                         row.remove();
                     }

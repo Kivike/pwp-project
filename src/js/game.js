@@ -1,6 +1,6 @@
 import $ from './jquery.js';
 
-import { getResource, sendData } from './api.js'
+import { getResource, deleteResource, sendData } from './api.js'
 import { getReturnButton, getContentsElem, getControlsElem, setTitle } from './utils.js'
 import { submitForm } from './form.js'
 
@@ -30,7 +30,6 @@ function renderGame(data) {
     let statusDiv = $('<div/>', {class: 'game-status'});
     let statusText = data.status == 0 ? 'active' : 'inactive';
 
-    console.log(data);
     statusDiv.append('<span>Game is <strong>' + statusText + '</strong></span>')
 
     if (data.status == 0) {
@@ -100,20 +99,17 @@ function renderScoreboard(gameData) {
     scoreboardContainer.append('<h4>Scoreboard</h4>')
 
     let scoreTable = $('<table class="table">');
-    let tableHeader = $('<thead><tr><th scope="col">Player</th><th scope="col">Score</th></tr></thead>')
+    let tableHeader = $('<thead><tr><th scope="col">Player</th><th scope="col">Score</th><th></th></tr></thead>')
     scoreTable.append(tableHeader);
 
     let tableBody = $('<tbody>');
     scoreTable.append(tableBody);
 
-    getResource(gameData['@controls']['gamescr:scores'].href, function(resData) {
-        console.log(resData);
-
-        resData.items.forEach(function(item) {
-            console.log(item);
+    getResource(gameData['@controls']['gamescr:scores'].href, function(scoreboardData) {
+        scoreboardData.items.forEach(function(item) {
             let row = $('<tr>');
             row.append('<td>' + item.player + '</td>');
-
+            
             let scoreInput = $('<input>', {
                 value: item.score,
                 class: 'score',
@@ -130,7 +126,23 @@ function renderScoreboard(gameData) {
                 $(this).addClass('pending-change');
             })
             row.append($('<td>').append(scoreInput));
-        
+
+            let deleteBtn = $('<td><a><button>Delete</button></a></td>');
+            
+            if (gameData.status != 0) {
+                deleteBtn.find('button').attr('disabled', true);
+            } 
+            deleteBtn.click(function() {
+                getResource(item['@controls'].self.href, function(scoreData) {
+                    deleteResource(scoreData['@controls']['gamescr:delete'].href, function(deleteResData, status, deleteRes) {
+                        if (deleteRes.status === 204) {
+                            renderScoreboard(gameData);
+                        }
+                    });
+                });
+            });
+            row.append(deleteBtn);
+
             tableBody.append(row);
         });
     });
