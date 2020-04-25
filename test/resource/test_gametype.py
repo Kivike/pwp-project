@@ -38,6 +38,7 @@ class TestGametype(unittest.TestCase):
     def testGetGametype(self):
         """
         Test for successful gametype retrieval
+        Expects response with HTTP code 200 (OK)
         """
         db.session.add(GameType(name="Chess", min_players=2, max_players=2))
         db.session.commit
@@ -48,6 +49,11 @@ class TestGametype(unittest.TestCase):
         assert response.status_code == 200, response.status_code
 
     def testGetGametypeCollection(self):
+        '''
+        Test getting gametype collection with items
+        Expects response with HTTP code 200 (OK)
+        Expects response body contains gametypes from database
+        '''
         response = self.client.get(COLLECTION_URL)
 
         assert response.status_code == 200, response.status_code
@@ -72,6 +78,8 @@ class TestGametype(unittest.TestCase):
     def testPostGametype(self):
         """
         Test for successful gametype adding
+        Expects response with HTTP code 200 (OK)
+        Expects gametypes are added to database
         """
         test_cases = [
             {

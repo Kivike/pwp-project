@@ -27,12 +27,21 @@ class TestScore(unittest.TestCase):
         self.app_context.pop()
 
     def testGetNonExistingGameScoreboard(self):
+        '''
+        Test getting scoreboard for a game that does not exist
+        Expects HTTP code 404 (Not Found) as response
+        '''
         url = SCOREBOARD_URL.replace("<game_token>", "doesnotexist123")
         response = self.client.get(url)
         
         assert response.status_code == 404, response.status_code
 
     def testGetGameEmptyScoreboard(self):
+        '''
+        Test getting scoreboard for a game with empty scoreboard
+        Expects HTTP code 200 (OK) as response
+        Expect response body contains empty item array
+        '''
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
 
@@ -49,6 +58,11 @@ class TestScore(unittest.TestCase):
         assert len(data["items"]) == 0
 
     def testGetGameScoreboard(self):
+        '''
+        Test getting existing scoreboard
+        Expects response with HTTP code 200 (OK)
+        Expects response body contains scores from database
+        '''
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         player_a = Player(name="Testman A")
@@ -97,6 +111,10 @@ class TestScore(unittest.TestCase):
         assert PlayerScore.query.filter_by(player_id=1).count() == 1
 
     def testPostScoreWithoutPlayer(self):
+        '''
+        Test adding score with no player in data
+        Expects HTTP code 400 (Bad Request) as response
+        '''
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
 
@@ -116,6 +134,10 @@ class TestScore(unittest.TestCase):
         assert response.status_code == 400, response.status_code
 
     def testPostScoreNonExistingGame(self):
+        '''
+        Test adding score to game that does not exist
+        Expects HTTP code 404 (Not Found) as response
+        '''
         player = Player(name="Jamppa")
 
         db.session.add(player)
@@ -157,6 +179,7 @@ class TestScore(unittest.TestCase):
     def testGetNonExistingGamePlayerScore(self):
         """
         Error test for retrieving player score for nonexisting game
+        Expects HTTP code 404 (Not Found) as response
         """
         player = Player(name="Jamppa")
         db.session.add(player)
@@ -171,6 +194,7 @@ class TestScore(unittest.TestCase):
     def testGetNonExistingPlayerPlayerScore(self):
         """
         Error test for retrieving player score for nonexisting player
+        Expects HTTP code 404 (Not Found) as response
         """
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
@@ -187,6 +211,7 @@ class TestScore(unittest.TestCase):
     def testGetNonExistingPlayerScore(self):
         """
         Error test when player and game exist, but the player score does not
+        Expects HTTP code 404 (Not Found) as response
         """
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
@@ -206,6 +231,8 @@ class TestScore(unittest.TestCase):
     def testPutScoreEditScore(self):
         """
         Make a valid put request to change score value of a PlayerScore
+        Expects HTTP code 204 (No Content) as response
+        Expects score is updated in database
         """
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
@@ -238,6 +265,10 @@ class TestScore(unittest.TestCase):
         assert db_score.score == 50, db_score.score
 
     def testPutScoreNonExistingGame(self):
+        '''
+        Test updating score for non-existing game
+        Expects HTTP code 404 (Not Found) as response
+        '''
         player = Player(name="Jamppa")
         db.session.add(player)
         db.session.commit()
@@ -258,6 +289,10 @@ class TestScore(unittest.TestCase):
         assert response.status_code == 404, response.status_code
 
     def testPutScoreNonExistingPlayer(self):
+        '''
+        Test updating score for non-existing player
+        Expects HTTP code 404 (Not Found) as response
+        '''
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
 
@@ -282,6 +317,10 @@ class TestScore(unittest.TestCase):
         assert response.status_code == 404, response.status_code
 
     def testPutScoreNonExistingScore(self):
+        '''
+        Test updating a non-existing score
+        Expects HTTP code 404 (Not Found) as response
+        '''
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         player = Player(name="Jamppa")
@@ -310,6 +349,7 @@ class TestScore(unittest.TestCase):
     def testPutScoreDuplicatePlayer(self):
         """
         Change player of a score to one that already has score for the game
+        Expects response code 409 (Conflict) as response
         """
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
@@ -344,6 +384,7 @@ class TestScore(unittest.TestCase):
     def testPutScoreNewUrl(self):
         """
         Change player of a score so that url changes
+        Expects HTTP code 201 (Created) as response
         """
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
@@ -374,6 +415,10 @@ class TestScore(unittest.TestCase):
         assert response.status_code == 201, response.status_code
 
     def testPutScoreInvalidSchema(self):
+        '''
+        Test updating score with invalid fields
+        Expects HTTP code 400 (Bad Request) as response
+        '''
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         player = Player(name="Jamppa")
@@ -401,6 +446,10 @@ class TestScore(unittest.TestCase):
         assert response.status_code == 400, response.status_code
 
     def testPutScoreMissingContentType(self):
+        '''
+        Test updating score with missing ContentType header
+        Expects HTTP code 415 (Unsupported Media Type) as response
+        '''
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         player = Player(name="Jamppa")
@@ -428,6 +477,10 @@ class TestScore(unittest.TestCase):
         assert response.status_code == 415, response.status_code
 
     def testDeleteExistingPlayerScore(self):
+        '''
+        Test deleting score that exists in database
+        Expects HTTP code 204 (No Content) as response
+        '''
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         player = Player(name="Jamppa")
@@ -445,6 +498,10 @@ class TestScore(unittest.TestCase):
         assert response.status_code == 204, response.status_code
 
     def testDeleteScoreNonExistingGame(self):
+        '''
+        Test deleting score for non-existing game
+        Expects HTTP code 404 (Not Found) as response
+        '''
         player = Player(name="Jamppa")
         db.session.add(player)
         db.session.commit()
@@ -456,6 +513,10 @@ class TestScore(unittest.TestCase):
         assert response.status_code == 404, response.status_code
 
     def testDeleteScoreNonExistingPlayer(self):
+        '''
+        Test deleting score for non-existing player
+        Expects HTTP code 404 (Not Found) as response
+        '''
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         
@@ -471,6 +532,10 @@ class TestScore(unittest.TestCase):
         assert response.status_code == 404, response.status_code
 
     def testDeleteNonExistingScore(self):
+        '''
+        Test deleting non-existing score
+        Expects HTTP code 404 (Not Found) as response
+        '''
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         player = Player(name="Jamppa")
@@ -488,6 +553,8 @@ class TestScore(unittest.TestCase):
     def testDeleteGameDeletesScores(self):
         """
         Test that deleting game of a score also deletes scores for that game
+        Expects HTTP code 204 (No Content) as response
+        Expects that the scores will be deleted from the database
         """
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
@@ -511,7 +578,11 @@ class TestScore(unittest.TestCase):
         assert PlayerScore.query.count() == 0, PlayerScore.query.count()
 
     def testDeleteScorePlayerDeletesScore(self):
-        """Test that deleting player of a score also deletes the score of that player"""
+        '''
+        Test that deleting player of a score also deletes the score of that player
+        Expects HTTP code 204 (No Content as response)
+        Expects that the score will be deleted from the database
+        '''
         game_type = GameType(name="Uno")
         game = Game(game_token="test12345", game_type=game_type)
         player = Player(name="Testman")
@@ -523,7 +594,8 @@ class TestScore(unittest.TestCase):
         db.session.add(score)
 
         player_url = PLAYER_URL.replace("<player_name>", "Testman")
-        self.client.delete(player_url)
+        response = self.client.delete(player_url)
 
+        assert response.status_code = 204
         assert PlayerScore.query.count() == 0, PlayerScore.query.count()
 

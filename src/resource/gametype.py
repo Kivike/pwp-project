@@ -118,7 +118,7 @@ class GametypeResource(Resource):
         if new_name != gametype_name:
             db_gametype_new_name = GameType.query.filter_by(name=new_name).first()
             if db_gametype_new_name is not None:
-                return create_error_response(409, "Alredy exists", "Gametype already exists with name "
+                return create_error_response(409, "Already exists", "Gametype already exists with name "
                     + str(new_name))
         db_gametype.name = new_name
         #if min_players specified in the request

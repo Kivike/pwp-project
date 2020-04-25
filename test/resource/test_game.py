@@ -343,6 +343,10 @@ class TestPlayer(unittest.TestCase):
         assert game.finished_at is not None
     
     def testPutGameFinishedAt(self):
+        '''
+        Test that updating game status to 1 will set finished_at for the game
+        Expects response with HTTP code 201 (Created)
+        '''
         host = Player(name="Alice")
         db.session.add(host)
 
@@ -436,6 +440,10 @@ class TestPlayer(unittest.TestCase):
         assert Game.query.count() == 1
 
     def testPutNonExistingGame(self):
+        '''
+        Test updating non-existing game
+        Expects response with HTTP code 404 (Not Found)
+        '''
         host = Player(name="Alice")
         db.session.add(host)
         db.session.commit()
@@ -455,6 +463,10 @@ class TestPlayer(unittest.TestCase):
         assert response.status_code == 404, response.status_code
 
     def testPutGameNonExistingData(self):
+        '''
+        Test updating game with data of non-existing entities
+        Expects response with HTTP code 409 (Conflict)
+        '''
         host = Player(name="Alice")
         db.session.add(host)
 
@@ -491,6 +503,8 @@ class TestPlayer(unittest.TestCase):
     def testDeleteGame(self):
         """
         Test for successful game deletion
+        Expects response with HTTP code 204 (No Content)
+        Excepts that game is deleted from database
         """
         host = Player(name="Alice")
         db.session.add(host)
@@ -511,6 +525,7 @@ class TestPlayer(unittest.TestCase):
     def testDeleteNonExistingGame(self):
         """
         Test for error when deleting non existing game
+        Expects response with HTTP code 404 (Not Found)
         """
         url = ITEM_URL.replace("<game_token>", "doesnotexist")
         response = self.client.delete(url)
