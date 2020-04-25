@@ -89,4 +89,5 @@ class Tournament(db.Model):
 @click.command("init-db")
 @with_appcontext
 def init_db_command():
+    print("Init DB")
     db.create_all()

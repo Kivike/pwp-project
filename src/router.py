@@ -18,7 +18,7 @@ def route_app(app):
 
     @app.route("/")
     def index():
-        return "Index"
+        return app.send_static_file("html/index.html")
 
     @app.route("/api/")
     def entry():

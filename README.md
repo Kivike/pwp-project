@@ -37,6 +37,13 @@ In "production" environment, the command creates a database file called "gamesco
 
 ## Running the application
 
+### Using docker
+
+docker build -t pwp:latest .
+docker:run -d -p 5000:5000 pwp
+
+### Without docker
+
 Remember to setup the database before running the application.
 
 If you want to run the application, run __in the root directory of the project__:
@@ -44,6 +51,9 @@ If you want to run the application, run __in the root directory of the project__
 ``` flask run ```
 
 API entry point is ``` http://localhost:5000/api/ ```
+
+For compiling the client, run
+``` npm install && npm run build ```
 
 Run environment can be set with FLASK_ENV environmental variable. If the value isn't set, dev mode is used.
 Available modes:
@@ -53,6 +63,15 @@ Available modes:
 
 To run the app in production mode:
 ``` FLASK_ENV=live flask run ```
+
+
+
+## Frontend workflow
+Install depenencies
+``` npm install ```
+
+Start webpack bundling process
+``` npm run develop ```
 
 ## Run the tests
 
