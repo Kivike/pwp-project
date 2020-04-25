@@ -64,7 +64,7 @@ function renderPlayersTable(playersData, callback) {
             let row = $('<tr>')
             row.append('<td>' + item.name + '</td>');
 
-            let a = $('<td><a><button>Delete</button></a></td>').click(function() {
+            let a = $('<td><a><button class="btn btn-danger">Delete</button></a></td>').click(function() {
                 deleteResource(playerControls['gamescr:delete'].href, function(resData, status, res) {
                     if (res.status === 204) {
                         row.remove();

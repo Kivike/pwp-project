@@ -130,7 +130,7 @@ function renderScoreboard(gameData) {
             let row = $('<tr>');
             row.append('<td>' + item.player + '</td>');
             
-            let scoreInput = $('<input>', {
+            let scoreInput = $('<input/>', {
                 value: item.score,
                 class: 'score',
                 disabled: gameData.status != 0
@@ -203,7 +203,7 @@ function renderAddPlayerscore(gameData) {
     addScoreForm.attr('method', addScoreControl.method);
 
     let playerSelect = $('<select/>', {
-        class: 'field-' + addScoreForm.attr('form-id'),
+        class: 'form-control field-' + addScoreForm.attr('form-id'),
         'gamescr-field': 'player'
     });
     addScoreForm.append(playerSelect);
