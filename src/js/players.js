@@ -32,7 +32,7 @@ function renderAddPlayerForm(playersData) {
     let addPlayerForm = renderControlForm(addPlayerControl, "player", function() {
         getResource(playersData['@controls'].self.href, renderAllPlayers);
     });
-    addPlayerForm.addClass("new-player")
+    addPlayerForm.addClass("new-player form-inline")
     addPlayerContainer.append('<h4>' + addPlayerControl.title + '</h4>')
     addPlayerContainer.append(addPlayerForm);
 

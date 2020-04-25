@@ -34,12 +34,12 @@ function renderControlForm(control, formId, submitCallback, requiredOnly = false
         const requiredSpan = isRequired ? '<span class="required">*</span>' : '';
         const label = '<label for="' + inputId + '">' + prop.description + requiredSpan + ':</label>'
         inputDiv.append($(label))
-        inputDiv.append('<input class="field-' + formId + '" id="' + inputId + '" gamescr-field="' + propName + '"></input>')
+        inputDiv.append('<input class="form-control field-' + formId + '" id="' + inputId + '" gamescr-field="' + propName + '"></input>')
 
         form.append(inputDiv)
     }
     if (addSubmitButton) {
-        form.append('<button type="submit">Submit</button>')
+        form.append('<button type="submit" class="btn btn-primary">Submit</button>')
     }
     return form
 }

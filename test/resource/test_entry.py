@@ -21,6 +21,9 @@ class TestEntry(unittest.TestCase):
         self.app_context.pop()
 
     def testEntrypoint(self):
+        '''
+        Test for success response status
+        '''
         url = "/api/"
         response = self.client.get(url)
         assert response.status_code == 200
