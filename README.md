@@ -41,7 +41,7 @@ In "production" environment, the command creates a database file called "gamesco
 
 ``` docker build -t pwp:latest . ```
 
-``` docker:run -d -p 5000:5000 pwp ```
+``` docker run -d -p 5000:5000 pwp ```
 
 ### Without docker
 
