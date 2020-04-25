@@ -52,7 +52,7 @@ function renderAllGames(response) {
         let row = $('<tr>')
         row.append('<td>' + item.name + '</td>');
 
-        let a = $('<a href="' + gameHref + '"><button>Access</button></a>');
+        let a = $('<a href="' + gameHref + '"><button class="btn btn-primary">Access</button></a>');
 
         a.click(function(event) {
             followLink(event, this, renderGame)
