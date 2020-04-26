@@ -19,7 +19,7 @@ function renderNewGame(data) {
 
     let gameName = $('<div class="form-group"/>')
     gameName.append('<label for="game-name">' + nameProp.description + '</label>')
-    gameName.append('<input type="text" id="game-name" class="field-' + formIdGame + '" gamescr-field="name"></input>');
+    gameName.append('<input type="text" id="game-name" class="form-control field-' + formIdGame + '" gamescr-field="name"></input>');
     form.append(gameName)
 
     let addGametypePlaceholder = $('<div/>');
@@ -37,7 +37,7 @@ function renderNewGame(data) {
     let hostSelect = renderHostSelect(data['@controls']['gamescr:all-players'])
     hostSelect.find('select').addClass("field-" + formIdGame)
     form.append(hostSelect)
-    form.append('<button type="submit">Submit</button>')
+    form.append('<button type="submit" class="btn btn-primary">Submit</button>')
     form.attr('action', control.href)
     form.attr('method', control.method)
     form.submit(function(event) {
@@ -58,7 +58,7 @@ function renderGametypeSelect(gametypeData, formIdGame) {
     let gametypeSelectGroup = $('<div class="form-group"/>')
     gametypeSelectGroup.append('<label for="gametype-select">Game type:</label>')
 
-    let gametypeSelect = $('<select gamescr-field="game_type" id="gametype-select" class="field-' + formIdGame + '">')
+    let gametypeSelect = $('<select gamescr-field="game_type" id="gametype-select" class="form-control field-' + formIdGame + '">')
     gametypeSelect.append('<option value="new">-- new --</option>')
 
     gametypeSelectGroup.append(gametypeSelect);
@@ -143,8 +143,8 @@ function submitGametype(addGametypeControl, callback, error) {
  * @param {Object} control 
  */
 function renderHostSelect(control) {
-    let hostSelect = $('<select gamescr-field="host" id="host-select">')
-    let hostSelectContainer = $('<div>').append('<label for="host-select">Host name:</label>').append(hostSelect)
+    let hostSelect = $('<select class="form-control" gamescr-field="host" id="host-select">')
+    let hostSelectContainer = $('<div class="form-group">').append('<label for="host-select">Host name:</label>').append(hostSelect)
 
     getResource(control.href, function(response) {
         response.items.forEach(function(item) {

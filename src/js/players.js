@@ -32,7 +32,7 @@ function renderAddPlayerForm(playersData) {
     let addPlayerForm = renderControlForm(addPlayerControl, "player", function() {
         getResource(playersData['@controls'].self.href, renderAllPlayers);
     });
-    addPlayerForm.addClass("new-player")
+    addPlayerForm.addClass("new-player form-inline")
     addPlayerContainer.append('<h4>' + addPlayerControl.title + '</h4>')
     addPlayerContainer.append(addPlayerForm);
 
@@ -64,7 +64,7 @@ function renderPlayersTable(playersData, callback) {
             let row = $('<tr>')
             row.append('<td>' + item.name + '</td>');
 
-            let a = $('<td><a><button>Delete</button></a></td>').click(function() {
+            let a = $('<td><a><button class="btn btn-danger">Delete</button></a></td>').click(function() {
                 deleteResource(playerControls['gamescr:delete'].href, function(resData, status, res) {
                     if (res.status === 204) {
                         row.remove();

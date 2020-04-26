@@ -45,6 +45,9 @@ def route_app(app):
     route_tournament(app, api)
 
 def route_leaderboard(app, api): # pragma: no cover
+    '''
+    Not yet implemented
+    '''
     api.add_resource(
         LeaderboardGametype,
         "/api/leaderboard/gametype/<gametype_name>/",
@@ -57,5 +60,8 @@ def route_leaderboard(app, api): # pragma: no cover
     )
 
 def route_tournament(app, api): # pragma: no cover
+    '''
+    Not yet implemented
+    '''
     api.add_resource(TournamentResource, "/api/tournaments/<tournament_token>/")
     api.add_resource(TournamentCollection, "/api/tournaments/")

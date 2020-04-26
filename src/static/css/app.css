@@ -43,3 +43,11 @@ input.score {
 .contents {
     margin-top: 15px;
 }
+
+.form-add-gametype {
+    margin-left: 30px;
+}
+
+.form-control {
+    max-width: 250px;
+}

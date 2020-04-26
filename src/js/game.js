@@ -17,10 +17,7 @@ function renderGame(data) {
     let contents = getContentsElem();
     contents.empty();
 
-    contents.append($('<div/>', {
-        class: 'game-type',
-        html: 'Gametype: ' + data.game_type
-    }));
+    contents.append(renderGametype(data))
 
     contents.append($('<div/>', {
         class: 'created-at',
@@ -37,7 +34,7 @@ function renderGame(data) {
             endGame(event, data);
         });
         statusDiv.append(endGameBtn);
-        endGameBtn.wrap('<button/>');
+        endGameBtn.wrap('<button class="btn btn-secondary" />');
     }
 
     contents.append(statusDiv);
@@ -50,6 +47,29 @@ function renderGame(data) {
     renderScores(data);
 }
 
+function renderGametype(gameData) {
+    const getGametypeHref = gameData['@controls']['gamescr:gametype'].href;
+
+    let gametypeElem = $('<div class="game-type"/>');
+
+    getResource(getGametypeHref, function(res) {
+        let content = 'Gametype: ' + gameData.game_type;
+
+        if (res.min_players && res.max_players) {
+            if (res.min_players !== res.max_players) {
+                content += ' (' + res.min_players + ' - ' + res.max_players + ' players)';
+            } else {
+                content += ' (' + res.min_players + ' players)';
+            }
+        } else if (res.min_players) {
+            content += ' (' + res.min_players + '+ players)';
+        } else if (res.max_players) {
+            content += ' (up to ' + res.max_players + ' players)';
+        }
+        gametypeElem.html(content);
+    });
+    return gametypeElem;
+}
 function endGame(event, gameData) {
     sendData(gameData['@controls'].self.href, 'PUT', {
         name: gameData.name,
@@ -110,7 +130,7 @@ function renderScoreboard(gameData) {
             let row = $('<tr>');
             row.append('<td>' + item.player + '</td>');
             
-            let scoreInput = $('<input>', {
+            let scoreInput = $('<input/>', {
                 value: item.score,
                 class: 'score',
                 disabled: gameData.status != 0
@@ -127,7 +147,7 @@ function renderScoreboard(gameData) {
             })
             row.append($('<td>').append(scoreInput));
 
-            let deleteBtn = $('<td><a><button>Delete</button></a></td>');
+            let deleteBtn = $('<td><a><button class="btn btn-danger">Delete</button></a></td>');
             
             if (gameData.status != 0) {
                 deleteBtn.find('button').attr('disabled', true);
@@ -177,17 +197,17 @@ function updateScore(item, newScore, callback) {
 function renderAddPlayerscore(gameData) {
     const addScoreControl = gameData['@controls']['gamescr:add-score'];
 
-    let addScoreForm = $('<form>');
+    let addScoreForm = $('<form class="form-inline">');
     addScoreForm.attr('form-id', 'add-score');
     addScoreForm.attr('action', addScoreControl.href);
     addScoreForm.attr('method', addScoreControl.method);
 
     let playerSelect = $('<select/>', {
-        class: 'field-' + addScoreForm.attr('form-id'),
+        class: 'form-control field-' + addScoreForm.attr('form-id'),
         'gamescr-field': 'player'
     });
     addScoreForm.append(playerSelect);
-    addScoreForm.append($('<button type="submit">Add player</button>'))
+    addScoreForm.append($('<button type="submit" class="btn btn-primary">Add player</button>'))
 
     let gameInput = $('<input>', {
         class: 'field-' + addScoreForm.attr('form-id'),
