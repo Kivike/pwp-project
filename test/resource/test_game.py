@@ -300,6 +300,7 @@ class TestPlayer(unittest.TestCase):
     def testPutGameValid(self):
         """
         Test for successfully renaming a game
+        Expects 201 due to new address
         """
         host = Player(name="Alice")
         host_alter = Player(name="Bob")
