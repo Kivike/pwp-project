@@ -105,6 +105,7 @@ class GametypeResource(Resource):
     def put(self, gametype_name):
         if not request.json:
             return create_error_response(415, "Unsupported Media Type", "use JSON")
+        nameChange = False
         db_gametype = GameType.query.filter_by(name=gametype_name).first()
         if db_gametype is None:
             return create_error_response(404, "Gametype not found")
@@ -116,6 +117,7 @@ class GametypeResource(Resource):
         new_name = request.json["name"]
         #If the new name already in use, return 409
         if new_name != gametype_name:
+            nameChange = True
             db_gametype_new_name = GameType.query.filter_by(name=new_name).first()
             if db_gametype_new_name is not None:
                 return create_error_response(409, "Already exists", "Gametype already exists with name "
@@ -139,9 +141,12 @@ class GametypeResource(Resource):
         db.session.commit()
 
         #Return the location in the header in case the name changes
-        return Response(status=201, headers={
-            "Location": url_for("gametyperesource", gametype_name=new_name)
-        })
+        if nameChange:
+            return Response(status=201, headers={
+                "Location": url_for("gametyperesource", gametype_name=new_name)
+            })
+        else:
+            return Response(status=204)
 
     #Delete a gametype
     def delete(self, gametype_name):

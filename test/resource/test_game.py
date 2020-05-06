@@ -300,6 +300,7 @@ class TestPlayer(unittest.TestCase):
     def testPutGameValid(self):
         """
         Test for successfully renaming a game
+        Expects 201 due to new address
         """
         host = Player(name="Alice")
         host_alter = Player(name="Bob")
@@ -345,7 +346,7 @@ class TestPlayer(unittest.TestCase):
     def testPutGameFinishedAt(self):
         '''
         Test that updating game status to 1 will set finished_at for the game
-        Expects response with HTTP code 201 (Created)
+        Expects response with HTTP code 204
         '''
         host = Player(name="Alice")
         db.session.add(host)
@@ -372,7 +373,7 @@ class TestPlayer(unittest.TestCase):
             content_type="application/json"
         )
 
-        assert response.status_code == 201, response.status_code
+        assert response.status_code == 204, response.status_code
         game = Game.query.first()
 
         assert game.finished_at is None, game.finished_at
@@ -407,7 +408,7 @@ class TestPlayer(unittest.TestCase):
             content_type="application/json"
         )
 
-        assert response.status_code == 201, response.status_code
+        assert response.status_code == 204, response.status_code
         game = Game.query.first()
 
         assert game.finished_at is None, game.finished_at

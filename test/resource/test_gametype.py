@@ -175,9 +175,27 @@ class TestGametype(unittest.TestCase):
             content_type="application/json"
         )
 
-        assert response.status_code == 201, response.status_code
+        assert response.status_code == 204, response.status_code
 
         game_type = GameType.query.filter_by(name="Chess").first()
+        assert game_type.max_players == 3
+
+    def testPutGametypeRename(self):
+        """
+        Test for successful PUT gametype
+        """
+        db.session.add(GameType(name="Chess", max_players=2))
+        db.session.commit()
+
+        response = self.client.put(
+            ITEM_URL.replace("<gametype_name>", "Chess"),
+            data=json.dumps({"name": "Chess2", "max_players": 3}),
+            content_type="application/json"
+        )
+
+        assert response.status_code == 201, response.status_code
+
+        game_type = GameType.query.filter_by(name="Chess2").first()
         assert game_type.max_players == 3
 
     def testPutGametypeDuplicate(self):

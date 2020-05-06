@@ -165,6 +165,7 @@ class GameResource(Resource):
         if not request.json:
             return create_error_response(415, "Unsupported Media Type", "use JSON")
         db_game = Game.query.filter_by(game_token=game_name).first()
+        nameChange = False
         if db_game is None:
             return create_error_response(404, "Game not found")
         try: 
@@ -175,6 +176,7 @@ class GameResource(Resource):
             new_name = request.json["name"]
             #If the new name already in use, return 409
             if new_name != game_name:
+                nameChange = True
                 db_game_new_name = Game.query.filter_by(game_token=new_name).first()
                 if db_game_new_name is not None:
                     return create_error_response(409, "Alredy exists", "Game already exists with name "
@@ -232,9 +234,12 @@ class GameResource(Resource):
         db.session.commit()
 
         #Return the location in the header in case the name changes
-        return Response(status=201, headers={
-            "Location": url_for("gameresource", game_name=db_game.game_token)
-        })
+        if nameChange:
+            return Response(status=201, headers={
+                "Location": url_for("gameresource", game_name=db_game.game_token)
+            })
+        else:
+            return Response(status=204)
         
     #Delete a game
     def delete(self, game_name):
