@@ -596,6 +596,6 @@ class TestScore(unittest.TestCase):
         player_url = PLAYER_URL.replace("<player_name>", "Testman")
         response = self.client.delete(player_url)
 
-        assert response.status_code = 204
+        assert response.status_code == 204
         assert PlayerScore.query.count() == 0, PlayerScore.query.count()
 
