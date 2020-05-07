@@ -51,11 +51,6 @@ If you want to run the application, run __in the root directory of the project__
 
 ``` flask run ```
 
-API entry point is ``` http://localhost:5000/api/ ```
-
-For compiling the client, run
-``` npm install && npm run build ```
-
 Run environment can be set with FLASK_ENV environmental variable. If the value isn't set, dev mode is used.
 Available modes:
 - __development__ (database is permanently stored in file db/test.db)
@@ -65,6 +60,16 @@ Available modes:
 To run the app in production mode:
 ``` FLASK_ENV=live flask run ```
 
+## API entry point
+
+API entry point is ``` http://127.0.0.1:5000/api/ ```
+
+## Browser client
+
+For compiling the client, run
+``` npm install && npm run build ```
+
+When running the application, access the client by accessing ```http://127.0.0.1:5000 ``` in the browser.
 
 
 ## Frontend workflow
